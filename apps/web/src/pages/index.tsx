@@ -1,27 +1,35 @@
-import type { GetStaticProps, NextPage } from "next";
+import { type NextPage } from "next";
 import { trpc } from "../utils/trpc";
 import React from "react";
+import { UserListing } from "../components/UserListing";
 
 const Index: NextPage = () => {
   const [inputName, setInputName] = React.useState("");
 
-  const { data, isLoading } = trpc.useQuery([
-    "hello",
-    {
-      name: inputName,
-    },
+  const { data: user, isLoading } = trpc.useQuery([
+    "user.getByNameWithTransactions",
+    { name: inputName },
   ]);
 
   return (
     <div>
-      <p>Enter a name and see if you're in the database</p>
+      <p>Search user:</p>
       <input
         type="text"
-        placeholder="Enter a name"
+        className="input"
+        placeholder="Enter the user's name"
         value={inputName}
         onChange={(e) => setInputName(e.target.value)}
       />
-      <h1>{isLoading ? "Searching..." : data}</h1>
+      <h1>
+        {isLoading ? (
+          "Searching..."
+        ) : !user ? (
+          `User ${inputName} not found.`
+        ) : (
+          <UserListing user={user} />
+        )}
+      </h1>
     </div>
   );
 };
