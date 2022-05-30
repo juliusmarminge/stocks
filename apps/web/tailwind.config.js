@@ -1,7 +1,1 @@
-module.exports = {
-  content: ["./src/**/*.tsx"],
-  theme: {
-    extend: {},
-  },
-  plugins: [require("daisyui")],
-};
+module.exports = require("@stocks/config/tailwind.config.js");

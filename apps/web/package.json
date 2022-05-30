@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@stocks/api": "workspace:*",
+    "@stocks/config": "workspace:*",
     "@trpc/client": "^9.23.6",
     "@trpc/next": "^9.23.6",
     "@trpc/react": "^9.23.6",
