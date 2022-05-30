@@ -2,8 +2,9 @@
   "name": "@stocks/db",
   "version": "0.1.0",
   "scripts": {
+    "dev": "prisma studio",
     "postinstall": "prisma generate",
-    "push": "prisma db push"
+    "push": "prisma generate && prisma db push"
   },
   "devDependencies": {
     "prisma": "^3.14.0"
