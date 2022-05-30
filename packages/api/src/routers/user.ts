@@ -1,5 +1,6 @@
 import { createRouter } from "../create-router";
-import { z } from "zod";
+import { input, z } from "zod";
+import type { User, Transaction } from "@stocks/db";
 
 export const userRouter = createRouter()
   .query("getAll", {
@@ -13,9 +14,7 @@ export const userRouter = createRouter()
     }),
     async resolve({ input, ctx }) {
       return await ctx.prisma.user.findFirst({
-        where: {
-          id: input.id,
-        },
+        where: { id: input.id },
       });
     },
   })
@@ -25,9 +24,18 @@ export const userRouter = createRouter()
     }),
     async resolve({ input, ctx }) {
       return await ctx.prisma.user.findFirst({
-        where: {
-          name: input.name,
-        },
+        where: { name: input.name },
+      });
+    },
+  })
+  .query("getByNameWithTransactions", {
+    input: z.object({
+      name: z.string(),
+    }),
+    async resolve({ input, ctx }) {
+      return await ctx.prisma.user.findFirst({
+        where: { name: input.name },
+        include: { transactions: true },
       });
     },
   })

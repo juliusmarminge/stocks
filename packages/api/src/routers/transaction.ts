@@ -19,6 +19,21 @@ export const transactionRouter = createRouter()
       });
     },
   })
+  .query("getByUserId", {
+    input: z.object({
+      id: z.string().uuid(),
+    }),
+    async resolve({ input, ctx }) {
+      return await ctx.prisma.user.findMany({
+        where: {
+          ...input,
+        },
+        include: {
+          transactions: true,
+        },
+      });
+    },
+  })
   .mutation("create", {
     input: z.object({
       transactedAt: z.date().optional(),
