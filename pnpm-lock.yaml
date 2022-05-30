@@ -12,13 +12,13 @@ importers:
 
   apps/web:
     specifiers:
+      '@stocks/api': workspace:*
       '@trpc/client': ^9.23.6
       '@trpc/next': ^9.23.6
       '@trpc/react': ^9.23.6
       '@trpc/server': ^9.23.6
       '@types/node': ^17.0.12
       '@types/react': 17.0.37
-      api: workspace:*
       eslint: 7.32.0
       next: ^12.1.6
       next-transpile-modules: 9.0.0
@@ -27,11 +27,11 @@ importers:
       react-query: ^3.39.1
       typescript: ^4.5.3
     dependencies:
+      '@stocks/api': link:../../packages/api
       '@trpc/client': 9.23.6_@trpc+server@9.23.6
       '@trpc/next': 9.23.6_5e64f6dalkchvxb7l5qxlycd7q
       '@trpc/react': 9.23.6_hl3nkuofzc7z2pyoju3q3g4n7y
       '@trpc/server': 9.23.6
-      api: link:../../packages/api
       next: 12.0.8_noz7egsnsfdcs6s6px6pthieke
       react: 17.0.2
       react-dom: 17.0.2_react@17.0.2
@@ -45,12 +45,12 @@ importers:
 
   packages/api:
     specifiers:
+      '@stocks/db': workspace:*
       '@trpc/server': ^9.23.6
-      db: workspace:*
       zod: ^3.17.3
     dependencies:
+      '@stocks/db': link:../db
       '@trpc/server': 9.23.6
-      db: link:../db
       zod: 3.17.3
 
   packages/db:

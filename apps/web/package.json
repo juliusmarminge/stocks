@@ -1,6 +1,6 @@
 {
-  "name": "web",
-  "version": "0.0.0",
+  "name": "@stocks/web",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -13,7 +13,7 @@
     "@trpc/next": "^9.23.6",
     "@trpc/react": "^9.23.6",
     "@trpc/server": "^9.23.6",
-    "api": "workspace:*",
+    "@stocks/api": "workspace:*",
     "next": "^12.1.6",
     "react": "17.0.2",
     "react-dom": "17.0.2",

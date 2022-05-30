@@ -1,5 +1,6 @@
 {
-  "name": "db",
+  "name": "@stocks/db",
+  "version": "0.1.0",
   "scripts": {
     "postinstall": "prisma generate",
     "push": "prisma db push"

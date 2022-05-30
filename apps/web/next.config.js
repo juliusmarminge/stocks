@@ -1,4 +1,4 @@
-const withTM = require("next-transpile-modules")(["api"]);
+const withTM = require("next-transpile-modules")(["@stocks/api"]);
 
 module.exports = withTM({
   reactStrictMode: true,

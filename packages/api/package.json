@@ -1,8 +1,9 @@
 {
-  "name": "api",
+  "name": "@stocks/api",
+  "version": "0.1.0",
   "dependencies": {
     "@trpc/server": "^9.23.6",
-    "db": "workspace:*",
+    "@stocks/db": "workspace:*",
     "zod": "^3.17.3"
   }
 }

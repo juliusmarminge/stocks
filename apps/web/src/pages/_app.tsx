@@ -1,6 +1,6 @@
 import { withTRPC } from "@trpc/next";
 import { AppType } from "next/dist/shared/lib/utils";
-import type { AppRouter } from "api";
+import type { AppRouter } from "@stocks/api";
 //import superjson from "superjson";
 
 const MyApp: AppType = ({ Component, pageProps }) => {
