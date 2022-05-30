@@ -1,0 +1,13 @@
+{
+  "name": "db",
+  "scripts": {
+    "postinstall": "prisma generate",
+    "push": "prisma db push"
+  },
+  "devDependencies": {
+    "prisma": "^3.14.0"
+  },
+  "dependencies": {
+    "@prisma/client": "^3.14.0"
+  }
+}
