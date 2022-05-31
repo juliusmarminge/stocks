@@ -1,22 +1,15 @@
 import type { NextPage } from "next";
-import { trpc } from "../utils/trpc";
+import { StockHistoryChart } from "../components/StockHistoryChart";
 
 const StocksPage: NextPage = () => {
-  const { data: stockHistory, isLoading } = trpc.useQuery([
-    "stock.get",
-    {
-      ticker: "AAPL",
-      startDate: new Date("2022-04-01"),
-      endDate: new Date("2022-05-31"),
-    },
-  ]);
-
-  /** in stockHistory.results
-   * vw: average price of day
-   *
-   */
-
-  return <pre>{JSON.stringify(stockHistory, null, 2)}</pre>;
+  return (
+    <div className="flex flex-col w-4/5 mx-auto mt-10">
+      <div className="grid card bg-base-200 rounded-box place-items-center">
+        <h1>Stock History (AAPL)</h1>
+        <StockHistoryChart />
+      </div>
+    </div>
+  );
 };
 
 export default StocksPage;
