@@ -10,6 +10,27 @@ import { createTransactionValidator } from "@stocks/api/src/validators/transacti
 const FormValidator = createTransactionValidator.omit({ transactedBy: true });
 type FormInput = z.infer<typeof FormValidator>;
 
+const SubmitButtonContent: React.FC<{ isSubmitting: boolean }> = ({
+  isSubmitting,
+}) => {
+  const spinnerStyles = {
+    "--value": 60,
+    "--size": "1rem",
+    "--thickness": ".25rem",
+  };
+  return isSubmitting ? (
+    <>
+      <div
+        className="radial-progress animate-spin mr-1"
+        style={spinnerStyles as React.CSSProperties}
+      />
+      Submitting...
+    </>
+  ) : (
+    <>Submit</>
+  );
+};
+
 export const CreateTransaction: React.FC = () => {
   const transactionMutation = trpc.useMutation("transaction.create");
   const ctx = trpc.useContext();
@@ -23,11 +44,14 @@ export const CreateTransaction: React.FC = () => {
     resolver: zodResolver(FormValidator),
   });
 
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+
   return (
     <div className="flex flex-col w-full p-8">
       <h1 className="text-2xl font-bold mb-4">Add new transaction</h1>
       <form
         onSubmit={handleSubmit((data, e) => {
+          setIsSubmitting(true);
           e?.preventDefault();
           transactionMutation.mutate(
             {
@@ -39,6 +63,7 @@ export const CreateTransaction: React.FC = () => {
               onSuccess: () => {
                 ctx.invalidateQueries("transaction.getAll");
                 reset(); // reset form fields
+                setIsSubmitting(false);
               },
             }
           );
@@ -47,22 +72,14 @@ export const CreateTransaction: React.FC = () => {
         {/** TRANSACTED AT */}
         <div className="input-group input-group-vertical my-4">
           <span className="bg-base-300">Transacted at</span>
-          <div className="flex flex-col lg:flex-row">
-            <input
-              {...register("transactedAt", {
-                setValueAs: (v: string) =>
-                  v.length === 0 ? new Date() : new Date(v),
-              })}
-              placeholder="Enter a Date-parsable string. Leave blank for Date.now()"
-              className="input lg:w-1/2 input-bordered placeholder:italic rounded-t-none"
-            />
-            <span className="lg:w-1/2 input input-bordered bg-base-100">
-              Parsed as:{" "}
-              {isValid(watch("transactedAt"))
-                ? format(watch("transactedAt"), "yyyy-MM-dd HH:mm:ss")
-                : "Invalid date"}
-            </span>
-          </div>
+          <input
+            {...register("transactedAt", {
+              setValueAs: (v: string) =>
+                v.length === 0 ? new Date() : new Date(v),
+            })}
+            placeholder="Enter a Date-parsable string. Leave blank for Date.now()"
+            className="input input-bordered placeholder:italic"
+          />
 
           {errors.transactedAt && (
             <span className="font-bold text-error py-1">
@@ -130,11 +147,9 @@ export const CreateTransaction: React.FC = () => {
         </div>
 
         {/** SUBMIT FORM */}
-        <input
-          type="submit"
-          value="Submit"
-          className="btn btn-primary w-full mt-4"
-        />
+        <button className="btn btn-primary w-full mt-4">
+          <SubmitButtonContent isSubmitting={isSubmitting} />
+        </button>
       </form>
     </div>
   );
@@ -171,7 +186,7 @@ export const TransactionsListing: React.FC = () => {
             <tr key={transaction.id} className="hover">
               <td>{transaction.type}</td>
               <td>{format(transaction.transactedAt, "yyyy-MM-dd HH:mm:ss")}</td>
-              <td>{transaction.stock}</td>
+              <td className="uppercase">{transaction.stock}</td>
               <td>{transaction.units}</td>
               <td>{transaction.pricePerUnit}</td>
             </tr>
