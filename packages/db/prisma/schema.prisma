@@ -42,3 +42,18 @@ enum TransactionType {
   BUY
   SELL
 }
+
+model StockHistory {
+  id      Int      @id @default(autoincrement())
+  stock   String
+  date    DateTime
+  open    Float
+  close   Float
+  high    Float
+  average Float
+  low     Float
+  volume  Int
+
+  @@unique([stock, date])
+  @@index([stock, date])
+}
