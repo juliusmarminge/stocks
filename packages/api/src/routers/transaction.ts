@@ -1,10 +1,15 @@
 import { createRouter } from "../create-router";
 import { z } from "zod";
+import { createTransactionValidator } from "../validators/transaction";
 
 export const transactionRouter = createRouter()
   .query("getAll", {
     async resolve({ ctx }) {
-      return await ctx.prisma.transaction.findMany();
+      return await ctx.prisma.transaction.findMany({
+        orderBy: {
+          transactedAt: "desc",
+        },
+      });
     },
   })
   .query("getById", {
@@ -35,18 +40,16 @@ export const transactionRouter = createRouter()
     },
   })
   .mutation("create", {
-    input: z.object({
-      transactedAt: z.date().optional(),
-      transactedBy: z.string().uuid(),
-      stock: z.string().max(6),
-      units: z.number().int().positive(),
-      pricePerUnit: z.number().positive(),
-      type: z.enum(["BUY", "SELL"]),
-    }),
+    input: createTransactionValidator,
     async resolve({ input, ctx }) {
       return await ctx.prisma.transaction.create({
         data: {
           ...input,
+          transactedBy: {
+            connect: {
+              id: input.transactedBy,
+            },
+          },
         },
       });
     },

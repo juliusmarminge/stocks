@@ -1,6 +1,9 @@
 import React from "react";
 import { NextPage } from "next";
-import { CreateUser, UsersListing } from "../components/User";
+import {
+  CreateTransaction,
+  TransactionsListing,
+} from "../components/Transactions";
 
 const HomePage: NextPage = () => {
   const [isDarkMode, setDarkMode] = React.useState(true);
@@ -20,11 +23,11 @@ const HomePage: NextPage = () => {
         {isDarkMode ? "Set Light Theme" : "Set Dark Theme"}
       </button>
       <div className={sectionStyle}>
-        <UsersListing />
+        <CreateTransaction />
       </div>
       <div className="divider" />
       <div className={sectionStyle}>
-        <CreateUser />
+        <TransactionsListing />
       </div>
     </div>
   );

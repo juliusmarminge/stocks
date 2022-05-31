@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@hookform/resolvers": "^2.8.10",
     "@stocks/api": "workspace:*",
     "@stocks/config": "workspace:*",
     "@trpc/client": "^9.23.6",
