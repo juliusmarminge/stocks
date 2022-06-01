@@ -1,5 +1,6 @@
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/router";
 
 import { CurrencyDollarIcon, UserIcon } from "@heroicons/react/outline";
@@ -82,9 +83,16 @@ const Navbar = () => {
         </div>
 
         {/* USER AUTH */}
-        <div className="flex items-center">
-          <UserIcon height={25} width={25} />
-          <span className="text-md font-bold">{user}</span>
+        <div className="avatar">
+          <div className="w-10 rounded-full relative ring ring-primary ring-offset-base-100 ring-offset-2">
+            <Image
+              alt="placeholder profile avatar"
+              src={`https://api.lorem.space/image/face?hash=${
+                Math.random() * 1e5
+              }`}
+              layout="fill"
+            />
+          </div>
         </div>
       </div>
     </div>

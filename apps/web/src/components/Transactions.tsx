@@ -12,27 +12,6 @@ import { CurrencyDollarIcon } from "@heroicons/react/outline";
 const FormValidator = createTransactionValidator.omit({ transactedBy: true });
 type FormInput = z.infer<typeof FormValidator>;
 
-const SubmitButtonContent: React.FC<{ isSubmitting: boolean }> = ({
-  isSubmitting,
-}) => {
-  const spinnerStyles = {
-    "--value": 60,
-    "--size": "1rem",
-    "--thickness": ".25rem",
-  };
-  return isSubmitting ? (
-    <>
-      <div
-        className="radial-progress animate-spin mr-1"
-        style={spinnerStyles as React.CSSProperties}
-      />
-      Submitting...
-    </>
-  ) : (
-    <>Submit</>
-  );
-};
-
 export const CreateTransaction: React.FC = () => {
   const transactionMutation = trpc.useMutation("transaction.create");
   const ctx = trpc.useContext();
@@ -149,8 +128,10 @@ export const CreateTransaction: React.FC = () => {
         </div>
 
         {/** SUBMIT FORM */}
-        <button className="btn btn-primary w-full mt-4">
-          <SubmitButtonContent isSubmitting={isSubmitting} />
+        <button
+          className={`btn btn-primary w-full mt-4 ${isSubmitting && "loading"}`}
+        >
+          {isSubmitting ? "Submitting..." : "Submit"}
         </button>
       </form>
     </div>
