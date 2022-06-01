@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@heroicons/react": "^1.0.6",
     "@hookform/resolvers": "^2.8.10",
     "@stocks/api": "workspace:*",
     "@stocks/config": "workspace:*",

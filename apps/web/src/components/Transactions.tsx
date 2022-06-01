@@ -6,6 +6,8 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createTransactionValidator } from "@stocks/api/src/validators/transaction";
 
+import { CurrencyDollarIcon } from "@heroicons/react/outline";
+
 /** the user id is not inputted by the form but instead retrieved by auth */
 const FormValidator = createTransactionValidator.omit({ transactedBy: true });
 type FormInput = z.infer<typeof FormValidator>;

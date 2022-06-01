@@ -2,14 +2,17 @@ import { withTRPC } from "@trpc/next";
 import { AppType } from "next/dist/shared/lib/utils";
 import type { AppRouter } from "@stocks/api";
 import superjson from "superjson";
+import Image from "next/image";
 
 import "../styles/globals.css";
+import Navbar from "../components/Navbar";
 
 const MyApp: AppType = ({ Component, pageProps }) => {
   return (
-    <>
+    <div className="w-[95%] lg:w-4/5 max-w-[2000px] mx-auto">
+      <Navbar />
       <Component {...pageProps} />
-    </>
+    </div>
   );
 };
 

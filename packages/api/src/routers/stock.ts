@@ -14,7 +14,9 @@ export const stockRouter = createRouter().query("get", {
   async resolve({ ctx, input: { ticker, startDate, endDate } }) {
     const dataFromDb = await ctx.prisma.stockHistory.findMany({
       where: {
-        stock: ticker.toUpperCase(),
+        stock: {
+          equals: ticker,
+        },
         date: {
           gte: startDate,
           lte: endDate,
@@ -36,13 +38,14 @@ export const stockRouter = createRouter().query("get", {
     });
 
     const getAndInsertRows = async (
+      apiKey: string,
       ticker: string,
       fromDate: string,
       toDate: string
     ) => {
-      const restApiClient = restClient(API_KEY);
+      const restApiClient = restClient(apiKey);
       const newRows = await restApiClient.forex.aggregates(
-        ticker,
+        ticker.toUpperCase(),
         1,
         "day",
         fromDate,
@@ -67,19 +70,19 @@ export const stockRouter = createRouter().query("get", {
       }
     };
 
-    const firstDayFromDb = dataFromDb[0]?.date ?? startDate;
+    const firstDayFromDb = dataFromDb[0]?.date ?? endDate;
     const lastDayFromDb = dataFromDb[dataFromDb.length - 1]?.date ?? startDate;
 
     if (
       firstDayFromDb > startDate &&
-      differenceInBusinessDays(startDate, firstDayFromDb) > 1
+      differenceInBusinessDays(firstDayFromDb, startDate) > 1
     ) {
       /** get rows [startDate, firstDayFromDb) */
       const fromDate = format(startDate, "yyyy-MM-dd");
       const toDate = format(sub(firstDayFromDb, { days: 1 }), "yyyy-MM-dd");
 
-      console.log("PRE: getAndInsertRows", ticker, fromDate, toDate);
-      const newRows = await getAndInsertRows(ticker, fromDate, toDate);
+      console.log("BEFORE: getAndInsertRows", ticker, fromDate, toDate);
+      const newRows = await getAndInsertRows(API_KEY, ticker, fromDate, toDate);
       if (newRows) {
         dataFromDb.unshift(...newRows);
       }
@@ -87,18 +90,23 @@ export const stockRouter = createRouter().query("get", {
 
     if (
       lastDayFromDb < endDate &&
-      differenceInBusinessDays(lastDayFromDb, endDate) > 1
+      differenceInBusinessDays(endDate, lastDayFromDb) > 1
     ) {
       /** get rows (lastDayFromDb, endDate] */
       const fromDate = format(add(lastDayFromDb, { days: 1 }), "yyyy-MM-dd");
       const toDate = format(endDate, "yyyy-MM-dd");
-      console.log("POST: getAndInsertRows", ticker, fromDate, toDate);
-      const newRows = await getAndInsertRows(ticker, fromDate, toDate);
+
+      console.log("AFTER: getAndInsertRows", ticker, fromDate, toDate);
+      const newRows = await getAndInsertRows(API_KEY, ticker, fromDate, toDate);
       if (newRows) {
         dataFromDb.push(...newRows);
       }
     }
 
-    return dataFromDb;
+    return dataFromDb.map((row) => ({
+      date: row.date,
+      average: row.average,
+      high: row.high,
+    }));
   },
 });
