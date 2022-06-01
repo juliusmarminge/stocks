@@ -2,12 +2,30 @@ import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-import { CurrencyDollarIcon } from "@heroicons/react/outline";
+import { CurrencyDollarIcon, UserIcon } from "@heroicons/react/outline";
+
+// TODO: Implement NextAuth for session
+const user = "Julius";
+
+const TabLink: React.FC<{
+  href: string;
+  tabName: string;
+}> = ({ href, tabName }) => {
+  const router = useRouter();
+  const isActive = router.route === href;
+  return (
+    <Link href={href}>
+      <a className={`tab tab-bordered ${isActive && "tab-active"}`}>
+        {tabName}
+      </a>
+    </Link>
+  );
+};
 
 const Navbar = () => {
-  const router = useRouter();
-  const { route } = router;
-
+  /**
+   * THEMING
+   **/
   const [isDarkMode, setDarkMode] = React.useState(true);
   const setTheme = (e: React.ChangeEvent<HTMLInputElement>) => {
     setDarkMode(e.target.checked);
@@ -29,6 +47,9 @@ const Navbar = () => {
     }
   }, []);
 
+  /**
+   * GERNERAL STYLES
+   **/
   const leftRightSize = "w-[200px]"; // to keep tabs centered
   return (
     <div className="w-full flex items-center justify-between">
@@ -44,36 +65,26 @@ const Navbar = () => {
 
       {/* MIDDLE SECTION WITH NAVIGATION-TABS */}
       <div className="tabs w-max justify-center gap-5 my-4">
-        <Link href="/">
-          <a
-            className={`tab tab-bordered ${route === "/" ? "tab-active" : ""}`}
-          >
-            Home
-          </a>
-        </Link>
-        <Link href="/stocks">
-          <a
-            className={`tab tab-bordered ${
-              route === "/stocks" ? "tab-active" : ""
-            }`}
-          >
-            Stocks
-          </a>
-        </Link>
+        <TabLink href="/" tabName="Home" />
+        <TabLink href="/stocks" tabName="Stocks" />
       </div>
 
       {/* RIGHT SECTION WITH SETTINGS / AUTH */}
-      <div className={`${leftRightSize}`}>
+      <div className={`${leftRightSize} flex justify-end items-center gap-4`}>
+        {/* DARK MODE TOGGLE */}
         <div className="form-control">
-          <label className="label cursor-pointer">
-            <span className="label-text">Dark Mode</span>
-            <input
-              type="checkbox"
-              className="toggle toggle-primary"
-              checked={isDarkMode}
-              onChange={setTheme}
-            />
-          </label>
+          <input
+            type="checkbox"
+            className="toggle toggle-primary"
+            checked={isDarkMode}
+            onChange={setTheme}
+          />
+        </div>
+
+        {/* USER AUTH */}
+        <div className="flex items-center">
+          <UserIcon height={25} width={25} />
+          <span className="text-md font-bold">{user}</span>
         </div>
       </div>
     </div>
