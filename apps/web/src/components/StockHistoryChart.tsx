@@ -11,7 +11,7 @@ import {
   Dot,
 } from "recharts";
 
-import { PlusCircleIcon } from "@heroicons/react/outline";
+import { PlusCircleIcon, MinusCircleIcon } from "@heroicons/react/solid";
 
 import { inferQueryOutput } from "../utils/trpc";
 import React from "react";
@@ -21,7 +21,7 @@ type ITransactions = { date: Date; value: number; type: "BUY" | "SELL" }[];
 
 const StockHistoryChart: React.FC<{
   stockHistory: inferQueryOutput<"stock.get">;
-  transactions: ITransactions;
+  transactions: inferQueryOutput<"transaction.getByUserId"> | undefined;
 }> = ({ stockHistory, transactions }) => {
   const CustomizedDot: React.FC<any> = (props: any) => {
     const {
@@ -32,24 +32,28 @@ const StockHistoryChart: React.FC<{
       payload: { date },
     } = props;
 
-    const isTransaction = transactions.find((t) => isSameDay(t.date, date));
+    const isTransaction = transactions?.find((t) =>
+      isSameDay(t.transactedAt, date)
+    );
 
     let colorClasses: string;
+    let Icon: any;
     switch (isTransaction?.type) {
       case "BUY":
         colorClasses = "stroke-success fill-success";
+        Icon = PlusCircleIcon;
         break;
       case "SELL":
         colorClasses = "stroke-error fill-error";
+        Icon = MinusCircleIcon;
         break;
       default:
-        colorClasses = "stroke-primary fill-primary";
-        break;
+        return null;
     }
 
-    const size = strokeWidth * 4;
+    const size = strokeWidth * 5;
     return (
-      <PlusCircleIcon
+      <Icon
         x={cx - size / 2}
         y={cy - size / 2}
         height={size}
@@ -74,7 +78,7 @@ const StockHistoryChart: React.FC<{
             bottom: 10,
           }}
         >
-          <CartesianGrid strokeDasharray="5 5" />
+          <CartesianGrid strokeDasharray="5" vertical={false} />
 
           <XAxis
             dataKey="date"

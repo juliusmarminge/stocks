@@ -3,7 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
 
-import { CurrencyDollarIcon, UserIcon } from "@heroicons/react/outline";
+import { CurrencyDollarIcon } from "@heroicons/react/outline";
 
 // TODO: Implement NextAuth for session
 const user = "Julius";
@@ -68,6 +68,7 @@ const Navbar = () => {
       <div className="tabs w-max justify-center gap-5 my-4">
         <TabLink href="/" tabName="Home" />
         <TabLink href="/stocks" tabName="Stocks" />
+        <TabLink href="/transactions" tabName="Transactions" />
       </div>
 
       {/* RIGHT SECTION WITH SETTINGS / AUTH */}

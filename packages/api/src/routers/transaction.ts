@@ -29,12 +29,9 @@ export const transactionRouter = createRouter()
       id: z.string().uuid(),
     }),
     async resolve({ input, ctx }) {
-      return await ctx.prisma.user.findMany({
+      return await ctx.prisma.transaction.findMany({
         where: {
-          ...input,
-        },
-        include: {
-          transactions: true,
+          userId: input.id,
         },
       });
     },
