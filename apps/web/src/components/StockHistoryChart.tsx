@@ -100,7 +100,6 @@ const StockHistoryChart: React.FC<{
             axisLine={false}
           />
           <Tooltip />
-          <Legend />
 
           <Line
             type="monotone"
