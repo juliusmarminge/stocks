@@ -43,6 +43,7 @@ export const stockRouter = createRouter().query("get", {
       fromDate: string,
       toDate: string
     ) => {
+      console.log("fetching");
       const restApiClient = restClient(apiKey);
       const newRows = await restApiClient.forex.aggregates(
         ticker.toUpperCase(),
