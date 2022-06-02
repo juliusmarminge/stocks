@@ -48,12 +48,8 @@ const Avatar: React.FC = () => {
     <button className={buttonClasses} onClick={toggleDropdown}>
       <div className="avatar">
         <div className="w-12 rounded-full">
-          {user.image ? (
-            <Image
-              src={user.image}
-              alt={user.name ?? "User Profile"}
-              layout="fill"
-            />
+          {user.image && user.image.includes("avatars.githubcontent.com") ? (
+            <Image src={user.image} alt={"User Profile"} layout="fill" />
           ) : (
             <UserIcon />
           )}
