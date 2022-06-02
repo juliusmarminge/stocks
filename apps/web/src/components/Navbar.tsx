@@ -2,6 +2,7 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
+import { useSession } from "next-auth/react";
 
 import { CurrencyDollarIcon } from "@heroicons/react/outline";
 
@@ -48,6 +49,12 @@ const Navbar = () => {
     }
   }, []);
 
+  /**
+   * AUTH
+   **/
+  const { data: session, status } = useSession();
+  console.log(session);
+  console.log(status);
   /**
    * GERNERAL STYLES
    **/
