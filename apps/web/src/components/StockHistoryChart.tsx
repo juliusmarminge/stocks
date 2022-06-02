@@ -17,54 +17,57 @@ import { inferQueryOutput } from "../utils/trpc";
 import React from "react";
 import { format, isSameDay } from "date-fns";
 
-type ITransactions = { date: Date; value: number; type: "BUY" | "SELL" }[];
+type IProps = { cx: number; cy: number; size: number };
+const getIcon = (type: "BUY" | "SELL" | undefined, iconProps: IProps) => {
+  const { cx, cy, size } = iconProps;
+  const x = cx - size / 2;
+  const y = cy - size / 2;
+
+  switch (type) {
+    case "BUY":
+      return (
+        <PlusCircleIcon
+          className={"stroke-success fill-success"}
+          x={x}
+          y={y}
+          height={size}
+          width={size}
+        />
+      );
+    case "SELL":
+      return (
+        <MinusCircleIcon
+          className={"stroke-error fill-error"}
+          x={x}
+          y={y}
+          height={size}
+          width={size}
+        />
+      );
+    default:
+      return null;
+  }
+};
 
 const StockHistoryChart: React.FC<{
   stockHistory: inferQueryOutput<"stock.get">;
   transactions: inferQueryOutput<"transaction.getByUserId"> | undefined;
 }> = ({ stockHistory, transactions }) => {
   const CustomizedDot: React.FC<any> = (props: any) => {
-    const {
-      cx,
-      cy,
-      strokeWidth,
-      value,
-      payload: { date },
-    } = props;
-
     const isTransaction = transactions?.find((t) =>
-      isSameDay(t.transactedAt, date)
+      isSameDay(t.transactedAt, props.payload.date)
     );
 
-    let colorClasses: string;
-    let Icon: any;
-    switch (isTransaction?.type) {
-      case "BUY":
-        colorClasses = "stroke-success fill-success";
-        Icon = PlusCircleIcon;
-        break;
-      case "SELL":
-        colorClasses = "stroke-error fill-error";
-        Icon = MinusCircleIcon;
-        break;
-      default:
-        return null;
-    }
-
-    const size = strokeWidth * 5;
-    return (
-      <Icon
-        x={cx - size / 2}
-        y={cy - size / 2}
-        height={size}
-        width={size}
-        className={`${colorClasses}`}
-      />
-    );
+    const size = props.strokeWidth * 4;
+    return getIcon(isTransaction?.type, {
+      cx: props.cx,
+      cy: props.cy,
+      size,
+    });
   };
 
   return (
-    <div className="w-full h-full min-h-96 text-primary">
+    <div className="w-full h-full min-h-md text-primary">
       <ResponsiveContainer>
         <LineChart
           key={Math.random()} // to keep dots rendering
@@ -78,7 +81,11 @@ const StockHistoryChart: React.FC<{
             bottom: 10,
           }}
         >
-          <CartesianGrid strokeDasharray="5" vertical={false} />
+          <CartesianGrid
+            strokeDasharray="4"
+            vertical={false}
+            className="stroke-gray-500"
+          />
 
           <XAxis
             dataKey="date"
@@ -90,6 +97,7 @@ const StockHistoryChart: React.FC<{
               (dataMin: number) => Math.round(dataMin * 0.9),
               (dataMax: number) => Math.round(dataMax * 1.1),
             ]}
+            axisLine={false}
           />
           <Tooltip />
           <Legend />
@@ -100,12 +108,6 @@ const StockHistoryChart: React.FC<{
             dataKey="average"
             stroke="currentColor"
             strokeWidth={5}
-          />
-          <Brush
-            className="fill-base stroke-primary"
-            fillOpacity={1}
-            strokeOpacity={1}
-            height={30}
           />
         </LineChart>
       </ResponsiveContainer>
