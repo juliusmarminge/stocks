@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 
-import { CurrencyDollarIcon } from "@heroicons/react/outline";
+import { CurrencyDollarIcon, UserIcon } from "@heroicons/react/outline";
 
 // TODO: Implement NextAuth for session
 const user = "Julius";
@@ -21,6 +21,45 @@ const TabLink: React.FC<{
         {tabName}
       </a>
     </Link>
+  );
+};
+
+const Avatar: React.FC = () => {
+  const { data: session, status } = useSession();
+  const buttonClasses = "btn btn-circle btn-outline btn-primary border-2";
+  const [dropdownOpen, setDropdownOpen] = React.useState(false);
+  const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
+
+  if (status === "loading")
+    return <button className={`${buttonClasses} loading disabled`} />;
+
+  if (status === "unauthenticated")
+    return (
+      <button className={buttonClasses} onClick={toggleDropdown}>
+        <Link href="/api/auth/signin">Sign In</Link>
+      </button>
+    );
+
+  /** authenticated */
+  const user = session?.user;
+  if (!user) return null; // <-- is this possible?
+
+  return (
+    <button className={buttonClasses} onClick={toggleDropdown}>
+      <div className="avatar">
+        <div className="w-12 rounded-full">
+          {user.image ? (
+            <Image
+              src={user.image}
+              alt={user.name ?? "User Profile"}
+              layout="fill"
+            />
+          ) : (
+            <UserIcon />
+          )}
+        </div>
+      </div>
+    </button>
   );
 };
 
@@ -49,12 +88,6 @@ const Navbar = () => {
     }
   }, []);
 
-  /**
-   * AUTH
-   **/
-  const { data: session, status } = useSession();
-  console.log(session);
-  console.log(status);
   /**
    * GERNERAL STYLES
    **/
@@ -91,17 +124,7 @@ const Navbar = () => {
         </div>
 
         {/* USER AUTH */}
-        <div className="avatar">
-          <div className="w-10 rounded-full relative ring ring-primary">
-            <Image
-              alt="placeholder profile avatar"
-              src={`https://api.lorem.space/image/face?hash=${
-                Math.random() * 1e5
-              }`}
-              layout="fill"
-            />
-          </div>
-        </div>
+        <Avatar />
       </div>
     </div>
   );
