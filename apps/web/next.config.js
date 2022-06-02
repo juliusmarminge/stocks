@@ -5,8 +5,8 @@ module.exports = withTM({
   images: {
     domains: [
       "images.unsplash.com",
-      "api.lorem.space",
-      "avatars.githubcontent.com",
+      "avatars.githubusercontent.com",
+      "avatars.dicebear.com",
     ],
   },
 });

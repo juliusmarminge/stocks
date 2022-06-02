@@ -1,10 +1,15 @@
-import React from "react";
+import React, { type Dispatch, type SetStateAction } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 
-import { CurrencyDollarIcon, UserIcon } from "@heroicons/react/outline";
+import {
+  CurrencyDollarIcon,
+  UserIcon,
+  SunIcon,
+  MoonIcon,
+} from "@heroicons/react/outline";
 
 // TODO: Implement NextAuth for session
 const user = "Julius";
@@ -24,38 +29,70 @@ const TabLink: React.FC<{
   );
 };
 
-const Avatar: React.FC = () => {
+const Profile: React.FC<{
+  toggleDropdown: () => void;
+}> = ({ toggleDropdown }) => {
   const { data: session, status } = useSession();
   const buttonClasses = "btn btn-circle btn-outline btn-primary border-2";
-  const [dropdownOpen, setDropdownOpen] = React.useState(false);
-  const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
 
   if (status === "loading")
-    return <button className={`${buttonClasses} loading disabled`} />;
+    return (
+      <button className={`btn btn-outline h-8 border-2 loading disabled`}>
+        Authenticating
+      </button>
+    );
 
   if (status === "unauthenticated")
     return (
-      <button className={buttonClasses} onClick={toggleDropdown}>
-        <Link href="/api/auth/signin">Sign In</Link>
-      </button>
+      <Link href="/api/auth/signin">
+        <button className={`btn btn-outline h-8 border-2`}>Sign In</button>
+      </Link>
     );
 
   /** authenticated */
   const user = session?.user;
   if (!user) return null; // <-- is this possible?
+  const authorizedImageSources = ["avatars.githubusercontent.com"];
+  const hasAllowedImage = authorizedImageSources.find((src) =>
+    user.image?.includes(src)
+  );
+  const imgSrc = hasAllowedImage
+    ? user.image!
+    : `https://avatars.dicebear.com/api/micah/${Math.random()}.svg`;
+
+  const handleSignOut = async () => {
+    const data = await signOut({
+      redirect: false,
+    });
+    console.log(data);
+  };
 
   return (
-    <button className={buttonClasses} onClick={toggleDropdown}>
-      <div className="avatar">
-        <div className="w-12 rounded-full">
-          {user.image && user.image.includes("avatars.githubcontent.com") ? (
-            <Image src={user.image} alt={"User Profile"} layout="fill" />
-          ) : (
-            <UserIcon />
-          )}
+    <div className="dropdown dropdown-end dropdown-hover">
+      <label tabIndex={0} className="avatar btn btn-circle">
+        <div className="w-10 relative rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
+          <Image
+            src={imgSrc}
+            alt="User Profile"
+            layout="fill"
+            objectFit="contain"
+          />
         </div>
-      </div>
-    </button>
+      </label>
+      <ul
+        tabIndex={0}
+        className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-full lg:w-64 text-sm"
+      >
+        <li>
+          <a>
+            Logged in as <span className="italic truncate">{user.name}</span>
+          </a>
+        </li>
+        <li>
+          <button onClick={handleSignOut}>Sign out</button>
+        </li>
+      </ul>
+    </div>
   );
 };
 
@@ -85,6 +122,11 @@ const Navbar = () => {
   }, []);
 
   /**
+   *  USER SESSION
+   **/
+  const [profileDropdownOpen, setProfileDropdownOpen] = React.useState(false);
+
+  /**
    * GERNERAL STYLES
    **/
   const leftRightSize = "w-[200px]"; // to keep tabs centered
@@ -110,17 +152,17 @@ const Navbar = () => {
       {/* RIGHT SECTION WITH SETTINGS / AUTH */}
       <div className={`${leftRightSize} flex justify-end items-center gap-4`}>
         {/* DARK MODE TOGGLE */}
-        <div className="form-control">
-          <input
-            type="checkbox"
-            className="toggle toggle-primary"
-            checked={isDarkMode}
-            onChange={setTheme}
-          />
-        </div>
+        <label className="swap swap-rotate items-center">
+          <input type="checkbox" checked={isDarkMode} onChange={setTheme} />
+
+          <SunIcon className="swap-off stroke-current w-10 h-10" />
+          <MoonIcon className="swap-on stroke-current w-10 h-10" />
+        </label>
 
         {/* USER AUTH */}
-        <Avatar />
+        <Profile
+          toggleDropdown={() => setProfileDropdownOpen(!profileDropdownOpen)}
+        />
       </div>
     </div>
   );
