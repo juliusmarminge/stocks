@@ -1,12 +1,11 @@
 import React from "react";
 import { trpc } from "../utils/trpc";
-import { format, isValid } from "date-fns";
+import { format } from "date-fns";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createTransactionValidator } from "@stocks/api/src/validators/transaction";
-
-import { CurrencyDollarIcon } from "@heroicons/react/outline";
+import { PencilIcon, XIcon } from "@heroicons/react/outline";
 
 /** the user id is not inputted by the form but instead retrieved by auth */
 const FormValidator = createTransactionValidator.omit({ transactedBy: true });
@@ -29,7 +28,7 @@ export const CreateTransaction: React.FC = () => {
 
   return (
     <div className="flex flex-col w-full p-8">
-      <h1 className="text-2xl font-bold mb-4">Add new transaction</h1>
+      <h1 className="text-2xl font-bold">Add new transaction</h1>
       <form
         onSubmit={handleSubmit((data, e) => {
           setIsSubmitting(true);
@@ -37,12 +36,12 @@ export const CreateTransaction: React.FC = () => {
           transactionMutation.mutate(
             {
               ...data,
-              transactedAt: data.transactedAt || new Date(),
+              transactedAt: data.transactedAt,
               transactedBy: "891efa5c-bc14-49b5-8968-051622bc7835",
             },
             {
               onSuccess: () => {
-                ctx.invalidateQueries("transaction.getAll");
+                ctx.invalidateQueries("transaction.getByUserId");
                 reset(); // reset form fields
                 setIsSubmitting(false);
               },
@@ -138,22 +137,52 @@ export const CreateTransaction: React.FC = () => {
   );
 };
 
+/**
+ * Lists all available transactions
+ * for the currently authenticated user
+ */
 export const TransactionsListing: React.FC = () => {
+  const ctx = trpc.useContext();
   const { data: transactions, isLoading } = trpc.useQuery([
-    "transaction.getAll",
+    "transaction.getByUserId",
+    { id: "891efa5c-bc14-49b5-8968-051622bc7835" },
   ]);
+  const deleteMutation = trpc.useMutation("transaction.delete");
+
+  const [isEditing, setIsEditing] = React.useState(false);
+  const [isMutating, setIsMutating] = React.useState<string>("");
+  const deleteTransaction = (id: string) => {
+    setIsMutating(id);
+    deleteMutation.mutate(
+      { id },
+      {
+        onSuccess: () => {
+          ctx.invalidateQueries("transaction.getByUserId");
+          setIsMutating("");
+        },
+      }
+    );
+  };
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <div>Loading transactions...</div>;
   }
   if (!transactions) {
     return <div>No transactions...</div>;
   }
   return (
     <div className="w-full p-8">
-      <h1 className="text-2xl font-bold mb-4">Transactions</h1>
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-bold">Transactions</h1>
+        <button
+          className="btn btn-square btn-base btn-md p-2"
+          onClick={() => setIsEditing(!isEditing)}
+        >
+          {isEditing ? <XIcon /> : <PencilIcon />}
+        </button>
+      </div>
       <table className="table w-full">
-        {/** head */}
+        {/** table head */}
         <thead>
           <tr>
             <th className="bg-base-300">Type</th>
@@ -161,9 +190,10 @@ export const TransactionsListing: React.FC = () => {
             <th className="bg-base-300">Stock</th>
             <th className="bg-base-300">Units</th>
             <th className="bg-base-300">PPU</th>
+            {isEditing && <th className="bg-base-300 w-4"></th>}
           </tr>
         </thead>
-        {/** body */}
+        {/** table body */}
         <tbody>
           {transactions.map((transaction) => (
             <tr key={transaction.id} className="hover">
@@ -172,6 +202,20 @@ export const TransactionsListing: React.FC = () => {
               <td className="uppercase">{transaction.stock}</td>
               <td>{transaction.units}</td>
               <td>{transaction.pricePerUnit}</td>
+              {isEditing && ( // TODO: FIX GLITCHY UI
+                <td className="w-min px-0 mx-0">
+                  <button
+                    className={`btn btn-square btn-outline m-0 p-0 btn-sm border-0 mr-2 ${
+                      isMutating === transaction.id && "loading"
+                    }`}
+                    onClick={() => deleteTransaction(transaction.id)}
+                  >
+                    {isMutating !== transaction.id && (
+                      <XIcon className="stroke-error h-4" />
+                    )}
+                  </button>
+                </td>
+              )}
             </tr>
           ))}
         </tbody>

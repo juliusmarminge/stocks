@@ -27,8 +27,8 @@ const StocksPage: NextPage = () => {
   return (
     <>
       <div className="flex flex-col mt-10">
-        <div className="card h-[700px] bg-base-200 rounded-box place-items-center">
-          <h1>Stock History ({ticker})</h1>
+        <div className="card h-[40vh] bg-base-200 rounded-box place-items-center">
+          <h1 className="py-2">{ticker}</h1>
           {isLoadingStockHistory || !stockHistory ? null : (
             <LazyStockHistoryChart
               stockHistory={stockHistory}

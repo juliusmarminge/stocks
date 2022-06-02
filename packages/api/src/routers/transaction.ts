@@ -50,4 +50,16 @@ export const transactionRouter = createRouter()
         },
       });
     },
+  })
+  .mutation("delete", {
+    input: z.object({
+      id: z.string().uuid(),
+    }),
+    async resolve({ input, ctx }) {
+      return await ctx.prisma.transaction.delete({
+        where: {
+          ...input,
+        },
+      });
+    },
   });
