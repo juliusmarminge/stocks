@@ -85,7 +85,7 @@ const Navbar = () => {
 
         {/* USER AUTH */}
         <div className="avatar">
-          <div className="w-10 rounded-full relative ring ring-primary ring-offset-base-100 ring-offset-2">
+          <div className="w-10 rounded-full relative ring ring-primary">
             <Image
               alt="placeholder profile avatar"
               src={`https://api.lorem.space/image/face?hash=${
