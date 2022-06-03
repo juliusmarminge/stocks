@@ -1,6 +1,5 @@
 import { createRouter } from "../create-router";
-import { input, z } from "zod";
-import type { User, Transaction } from "@stocks/db";
+import { z } from "zod";
 
 export const userRouter = createRouter()
   .query("getAll", {

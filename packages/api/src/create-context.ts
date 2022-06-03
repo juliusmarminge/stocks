@@ -2,7 +2,18 @@ import { PrismaClient } from "@stocks/db";
 import * as trpc from "@trpc/server";
 import * as trpcNext from "@trpc/server/adapters/next";
 
-const prisma = new PrismaClient();
+/**
+ * setup prisma client for the context,
+ * we can use this client to query the database
+ *
+ */
+declare global {
+  // allow global `var` declarations
+  // eslint-disable-next-line no-var
+  var prisma: PrismaClient | undefined;
+}
+const prisma = global.prisma ?? new PrismaClient();
+if (process.env.NODE_ENV !== "production") global.prisma = prisma;
 
 /**
  * Creates context for an incoming request
@@ -13,6 +24,7 @@ export const createContext = async ({
   res,
 }: trpcNext.CreateNextContextOptions) => {
   // for API-response caching see https://trpc.io/docs/caching
+
   return {
     req,
     res,

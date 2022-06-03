@@ -33,7 +33,6 @@ const Profile: React.FC<{
   toggleDropdown: () => void;
 }> = ({ toggleDropdown }) => {
   const { data: session, status } = useSession();
-  const buttonClasses = "btn btn-circle btn-outline btn-primary border-2";
 
   if (status === "loading")
     return (
@@ -85,7 +84,7 @@ const Profile: React.FC<{
       >
         <li>
           <a>
-            Logged in as <span className="italic truncate">{user.name}</span>
+            Signed in as <span className="italic truncate">{user.name}</span>
           </a>
         </li>
         <li>
