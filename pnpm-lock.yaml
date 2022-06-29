@@ -2,6 +2,7 @@ lockfileVersion: 5.4
 
 specifiers:
   '@heroicons/react': ^1.0.6
+  '@hookform/resolvers': ^2.9.3
   '@next-auth/prisma-adapter': ^1.0.3
   '@polygon.io/client-js': ^6.0.3
   '@prisma/client': ^4.0.0
@@ -33,6 +34,7 @@ specifiers:
 
 dependencies:
   '@heroicons/react': 1.0.6_react@18.2.0
+  '@hookform/resolvers': 2.9.3_react-hook-form@7.33.0
   '@next-auth/prisma-adapter': 1.0.3_n4bb4eq3e2c7enxf5qjt7rjuku
   '@polygon.io/client-js': 6.0.3
   '@prisma/client': 4.0.0_prisma@4.0.0
@@ -103,6 +105,14 @@ packages:
       react: '>= 16'
     dependencies:
       react: 18.2.0
+    dev: false
+
+  /@hookform/resolvers/2.9.3_react-hook-form@7.33.0:
+    resolution: {integrity: sha512-Eqc/qgjq0VX/TU0a5D2O+yR/kAKflnjaVlYFC1wI2qBm/sgjKTXxv27ijLwHUoHPIF+MUkB/VuQqHJ5DcmbCww==}
+    peerDependencies:
+      react-hook-form: ^7.0.0
+    dependencies:
+      react-hook-form: 7.33.0_react@18.2.0
     dev: false
 
   /@humanwhocodes/config-array/0.9.5:
