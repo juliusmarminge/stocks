@@ -4,7 +4,7 @@ import { format } from "date-fns";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { createTransactionValidator } from "@stocks/api/src/validators/transaction";
+import { createTransactionValidator } from "../validators/transaction";
 import { PencilIcon, XIcon } from "@heroicons/react/outline";
 
 /** the user id is not inputted by the form but instead retrieved by auth */
