@@ -8,7 +8,7 @@ const LazyStockHistoryChart = dynamic(
   async () => (await import("../components/StockHistoryChart")).StockHistoryChart,
   {
     ssr: false, // chart is buggy when rendered on server
-  },
+  }
 );
 
 // TODO: implement NextAuth and use id from there
@@ -20,12 +20,12 @@ const StocksPage: NextPage = () => {
   const endDate = React.useMemo(() => new Date(), []);
 
   const { data: stockHistory, isLoading: isLoadingStockHistory } = trpc.useQuery([
-    "stock.get",
+    "stocks.get",
     { ticker, startDate, endDate },
   ]);
 
   const { data: transactions, isLoading: isLoadingTransactions } = trpc.useQuery([
-    "transaction.getByUserId",
+    "transactions.getByUserId",
     { id: userId },
   ]);
 

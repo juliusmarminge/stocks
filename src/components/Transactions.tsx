@@ -12,7 +12,7 @@ const FormValidator = createTransactionValidator.omit({ transactedBy: true });
 type FormInput = z.infer<typeof FormValidator>;
 
 export const CreateTransaction: React.FC = () => {
-  const transactionMutation = trpc.useMutation("transaction.create");
+  const transactionMutation = trpc.useMutation("transactions.create");
   const ctx = trpc.useContext();
   const {
     register,
@@ -40,7 +40,7 @@ export const CreateTransaction: React.FC = () => {
             },
             {
               onSuccess: () => {
-                ctx.invalidateQueries("transaction.getByUserId");
+                ctx.invalidateQueries("transactions.getByUserId");
                 reset(); // reset form fields
                 setIsSubmitting(false);
               },
@@ -53,8 +53,7 @@ export const CreateTransaction: React.FC = () => {
           <span className="bg-base-300">Transacted at</span>
           <input
             {...register("transactedAt", {
-              setValueAs: (v: string) =>
-                v.length === 0 ? new Date() : new Date(v),
+              setValueAs: (v: string) => (v.length === 0 ? new Date() : new Date(v)),
             })}
             placeholder="Enter a Date-parsable string. Leave blank for Date.now()"
             className="input input-bordered placeholder:italic"
@@ -143,10 +142,10 @@ export const CreateTransaction: React.FC = () => {
 export const TransactionsListing: React.FC = () => {
   const ctx = trpc.useContext();
   const { data: transactions, isLoading } = trpc.useQuery([
-    "transaction.getByUserId",
+    "transactions.getByUserId",
     { id: "891efa5c-bc14-49b5-8968-051622bc7835" },
   ]);
-  const deleteMutation = trpc.useMutation("transaction.delete");
+  const deleteMutation = trpc.useMutation("transactions.delete");
 
   const [isEditing, setIsEditing] = React.useState(false);
   const [isMutating, setIsMutating] = React.useState<string>("");
@@ -156,7 +155,7 @@ export const TransactionsListing: React.FC = () => {
       { id },
       {
         onSuccess: () => {
-          ctx.invalidateQueries("transaction.getByUserId");
+          ctx.invalidateQueries("transactions.getByUserId");
           setIsMutating("");
         },
       }

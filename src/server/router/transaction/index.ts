@@ -1,6 +1,6 @@
-import { createRouter } from "./context";
+import { createRouter } from "../context";
 import { z } from "zod";
-import { createTransactionValidator } from "../../validators/transaction";
+import { createTransactionValidator } from "../../../validators/transaction";
 
 export const transactionRouter = createRouter()
   .query("getAll", {

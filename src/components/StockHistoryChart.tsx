@@ -50,11 +50,13 @@ const getIcon = (type: "BUY" | "SELL" | undefined, iconProps: IProps) => {
 };
 
 export const StockHistoryChart: React.FC<{
-  stockHistory: inferQueryOutput<"stock.get">;
-  transactions: inferQueryOutput<"transaction.getByUserId"> | undefined;
+  stockHistory: inferQueryOutput<"stocks.get">;
+  transactions: inferQueryOutput<"transactions.getByUserId"> | undefined;
 }> = ({ stockHistory, transactions }) => {
   const CustomizedDot: React.FC<any> = (props: any) => {
-    const isTransaction = transactions?.find((t) => isSameDay(t.transactedAt, props.payload.date));
+    const isTransaction = transactions?.find((t) =>
+      isSameDay(t.transactedAt, props.payload.date)
+    );
 
     const size = props.strokeWidth * 4;
     return getIcon(isTransaction?.type, {
@@ -79,7 +81,11 @@ export const StockHistoryChart: React.FC<{
             bottom: 10,
           }}
         >
-          <CartesianGrid strokeDasharray="4" vertical={false} className="stroke-gray-500" />
+          <CartesianGrid
+            strokeDasharray="4"
+            vertical={false}
+            className="stroke-gray-500"
+          />
 
           <XAxis
             dataKey="date"

@@ -7,8 +7,8 @@ import { transactionRouter } from "./transaction";
 
 export const appRouter = createRouter()
   .transformer(superjson)
-  .merge("transaction.", transactionRouter)
-  .merge("stock.", stockRouter);
+  .merge("transactions.", transactionRouter)
+  .merge("stocks.", stockRouter);
 
 // export type definition of API
 export type AppRouter = typeof appRouter;
