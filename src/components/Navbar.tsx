@@ -1,6 +1,6 @@
 import React, { type Dispatch, type SetStateAction } from "react";
 import Link from "next/link";
-import Image from "next/image";
+import Image from "next/future/image";
 import { useRouter } from "next/router";
 import { useSession, signOut } from "next-auth/react";
 
@@ -11,9 +11,6 @@ import {
   MoonIcon,
 } from "@heroicons/react/outline";
 
-// TODO: Implement NextAuth for session
-const user = "Julius";
-
 const TabLink: React.FC<{
   href: string;
   tabName: string;
@@ -22,9 +19,7 @@ const TabLink: React.FC<{
   const isActive = router.route === href;
   return (
     <Link href={href}>
-      <a className={`tab tab-bordered ${isActive && "tab-active"}`}>
-        {tabName}
-      </a>
+      <a className={`tab tab-bordered ${isActive && "tab-active"}`}>{tabName}</a>
     </Link>
   );
 };
@@ -51,13 +46,9 @@ const Profile: React.FC<{
   /** authenticated */
   const user = session?.user;
   if (!user) return null; // <-- is this possible?
-  const authorizedImageSources = ["avatars.githubusercontent.com"];
-  const hasAllowedImage = authorizedImageSources.find((src) =>
-    user.image?.includes(src)
-  );
-  const imgSrc = hasAllowedImage
-    ? user.image!
-    : `https://avatars.dicebear.com/api/micah/${Math.random()}.svg`;
+
+  const imgSrc =
+    user.image ?? `https://avatars.dicebear.com/api/micah/${Math.random()}.svg`;
 
   const handleSignOut = async () => {
     const data = await signOut({
@@ -70,12 +61,7 @@ const Profile: React.FC<{
     <div className="dropdown dropdown-end dropdown-hover">
       <label tabIndex={0} className="avatar btn btn-circle">
         <div className="w-10 relative rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-          <Image
-            src={imgSrc}
-            alt="User Profile"
-            layout="fill"
-            objectFit="contain"
-          />
+          <Image src={imgSrc} alt="User Profile" />
         </div>
       </label>
       <ul
