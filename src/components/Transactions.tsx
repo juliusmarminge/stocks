@@ -7,9 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { createTransactionValidator } from "../validators/transaction";
 import { PencilIcon, XIcon } from "@heroicons/react/outline";
 
-/** the user id is not inputted by the form but instead retrieved by auth */
-const FormValidator = createTransactionValidator.omit({ transactedBy: true });
-type FormInput = z.infer<typeof FormValidator>;
+type FormInput = z.infer<typeof createTransactionValidator>;
 
 export const CreateTransaction: React.FC = () => {
   const transactionMutation = trpc.useMutation("transactions.create");
@@ -20,7 +18,7 @@ export const CreateTransaction: React.FC = () => {
     reset,
     formState: { errors },
   } = useForm<FormInput>({
-    resolver: zodResolver(FormValidator),
+    resolver: zodResolver(createTransactionValidator),
   });
 
   const [isSubmitting, setIsSubmitting] = React.useState(false);
@@ -36,11 +34,10 @@ export const CreateTransaction: React.FC = () => {
             {
               ...data,
               transactedAt: data.transactedAt,
-              transactedBy: "891efa5c-bc14-49b5-8968-051622bc7835",
             },
             {
               onSuccess: () => {
-                ctx.invalidateQueries("transactions.getByUserId");
+                ctx.invalidateQueries("transactions.getByAuthedUser");
                 reset(); // reset form fields
                 setIsSubmitting(false);
               },
@@ -142,8 +139,7 @@ export const CreateTransaction: React.FC = () => {
 export const TransactionsListing: React.FC = () => {
   const ctx = trpc.useContext();
   const { data: transactions, isLoading } = trpc.useQuery([
-    "transactions.getByUserId",
-    { id: "891efa5c-bc14-49b5-8968-051622bc7835" },
+    "transactions.getByAuthedUser",
   ]);
   const deleteMutation = trpc.useMutation("transactions.delete");
 
@@ -155,7 +151,7 @@ export const TransactionsListing: React.FC = () => {
       { id },
       {
         onSuccess: () => {
-          ctx.invalidateQueries("transactions.getByUserId");
+          ctx.invalidateQueries("transactions.getByAuthedUser");
           setIsMutating("");
         },
       }
