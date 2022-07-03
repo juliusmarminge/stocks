@@ -11,9 +11,6 @@ const LazyStockHistoryChart = dynamic(
   }
 );
 
-// TODO: implement NextAuth and use id from there
-const userId = "891efa5c-bc14-49b5-8968-051622bc7835";
-
 const StocksPage: NextPage = () => {
   const ticker = "TSLA";
   const startDate = new Date("2022-04-01");
@@ -25,8 +22,7 @@ const StocksPage: NextPage = () => {
   ]);
 
   const { data: transactions, isLoading: isLoadingTransactions } = trpc.useQuery([
-    "transactions.getByUserId",
-    { id: userId },
+    "transactions.getByAuthedUser",
   ]);
 
   return (

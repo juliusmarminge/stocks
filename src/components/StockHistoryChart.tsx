@@ -51,7 +51,7 @@ const getIcon = (type: "BUY" | "SELL" | undefined, iconProps: IProps) => {
 
 export const StockHistoryChart: React.FC<{
   stockHistory: inferQueryOutput<"stocks.get">;
-  transactions: inferQueryOutput<"transactions.getByUserId"> | undefined;
+  transactions: inferQueryOutput<"transactions.getByAuthedUser"> | undefined;
 }> = ({ stockHistory, transactions }) => {
   const CustomizedDot: React.FC<any> = (props: any) => {
     const isTransaction = transactions?.find((t) =>
