@@ -21,4 +21,9 @@ const HomePage: NextPage = () => {
   );
 };
 
+export const config = {
+  unstable_runtimeJS: false,
+  runtime: "experimental-edge",
+};
+
 export default HomePage;
