@@ -2,6 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   experimental: {
+    runtime: "experimental-edge",
     images: {
       allowFutureImage: true,
       remotePatterns: [
