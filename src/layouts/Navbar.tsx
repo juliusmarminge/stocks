@@ -27,7 +27,7 @@ const ProfileAvatar: React.FC = () => {
   if (isLoading) {
     return (
       <button
-        className={`btn btn-outline h-8 aspect-square border-2 rounded-full loading disabled`}
+        className={`avatar btn btn-circle ring ring-primary ring-offset-base-100 loading disabled`}
       />
     );
   }
