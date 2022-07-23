@@ -3,7 +3,7 @@ import type { NextPage } from "next";
 const HomePage: NextPage = () => {
   return (
     <div className="hero min-h-[80vh] bg-base-200 rounded-box">
-      <div className="hero-content text-center">
+      <div className="text-center hero-content">
         <div className="max-w-lg">
           <h1 className="text-5xl font-bold">Welcome</h1>
           <p className="py-4">
@@ -11,7 +11,7 @@ const HomePage: NextPage = () => {
             stocks and transactions. You will be able to add transactions you have
             made on different services and have a place to see all of them together.
           </p>
-          <p className="italic pb-4">
+          <p className="pb-4 italic">
             App is work in progress and close-source for now.
           </p>
           <button className="btn btn-primary">Get Started</button>
@@ -20,10 +20,4 @@ const HomePage: NextPage = () => {
     </div>
   );
 };
-
-export const config = {
-  unstable_runtimeJS: false,
-  runtime: "experimental-edge",
-};
-
 export default HomePage;

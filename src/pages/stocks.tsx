@@ -1,6 +1,5 @@
 import type { NextPage } from "next";
 import dynamic from "next/dynamic";
-import Image from "next/image";
 import { trpc } from "../utils/trpc";
 import React from "react";
 
@@ -16,14 +15,11 @@ const StocksPage: NextPage = () => {
   const startDate = new Date("2022-04-01");
   const endDate = React.useMemo(() => new Date(), []);
 
-  const { data: stockHistory, isLoading: isLoadingStockHistory } = trpc.useQuery([
-    "stocks.get",
-    { ticker, startDate, endDate },
-  ]);
+  const { data: stockHistory, isLoading: isLoadingStockHistory } =
+    trpc.proxy.stocks.getByAuthedUser.useQuery({ ticker, startDate, endDate });
 
-  const { data: transactions, isLoading: isLoadingTransactions } = trpc.useQuery([
-    "transactions.getByAuthedUser",
-  ]);
+  const { data: transactions, isLoading: isLoadingTransactions } =
+    trpc.proxy.transactions.getByAuthedUser.useQuery();
 
   return (
     <>

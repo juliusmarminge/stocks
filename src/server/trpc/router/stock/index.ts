@@ -1,21 +1,18 @@
-import { createRouter } from "../context";
-import { TRPCError } from "@trpc/server";
-import { getStockValidator } from "../../../validators/stock";
+import { authedProcedure, t } from "../../utils";
 import { getDataFromDb } from "./d/getDataFromDb";
 import { getLatterData, getPriorData } from "./d/complementDbData";
+import { z } from "zod";
 
-export const stockRouter = createRouter()
-  .middleware(async ({ ctx, next }) => {
-    // Any queries or mutations after this middleware will
-    // raise an error unless there is a current session
-    if (!ctx.session) {
-      throw new TRPCError({ code: "UNAUTHORIZED" });
-    }
-    return next();
-  })
-  .query("get", {
-    input: getStockValidator,
-    async resolve({ ctx, input }) {
+export const getStockValidator = z.object({
+  ticker: z.string(),
+  startDate: z.date(),
+  endDate: z.date(),
+});
+
+export const stockRouter = t.router({
+  getByAuthedUser: authedProcedure
+    .input(getStockValidator)
+    .query(async ({ input, ctx }) => {
       const { startDate, endDate, ticker } = input;
 
       const dataFromDb = await getDataFromDb(ctx.prisma, { ...input });
@@ -39,5 +36,5 @@ export const stockRouter = createRouter()
       if (latterData) dataFromDb.push(...latterData);
 
       return dataFromDb;
-    },
-  });
+    }),
+});

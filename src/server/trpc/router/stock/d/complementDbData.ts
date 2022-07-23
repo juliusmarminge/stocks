@@ -1,5 +1,5 @@
 import { restClient } from "@polygon.io/client-js";
-import { prisma } from "../../../db/client";
+import { prisma } from "../../../../db/client";
 import { format, sub, add, differenceInBusinessDays } from "date-fns";
 
 type Prisma = typeof prisma;

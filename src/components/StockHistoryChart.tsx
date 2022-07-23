@@ -13,7 +13,8 @@ import {
 
 import { PlusCircleIcon, MinusCircleIcon } from "@heroicons/react/solid";
 
-import { inferQueryOutput } from "../utils/trpc";
+import type { inferProcedureOutput } from "@trpc/server";
+import { type AppRouter } from "~/server/trpc/router";
 import React from "react";
 import { format, isSameDay } from "date-fns";
 
@@ -50,8 +51,10 @@ const getIcon = (type: "BUY" | "SELL" | undefined, iconProps: IProps) => {
 };
 
 export const StockHistoryChart: React.FC<{
-  stockHistory: inferQueryOutput<"stocks.get">;
-  transactions: inferQueryOutput<"transactions.getByAuthedUser"> | undefined;
+  stockHistory: inferProcedureOutput<AppRouter["stocks"]["getByAuthedUser"]>;
+  transactions:
+    | inferProcedureOutput<AppRouter["transactions"]["getByAuthedUser"]>
+    | undefined;
 }> = ({ stockHistory, transactions }) => {
   const CustomizedDot: React.FC<any> = (props: any) => {
     const isTransaction = transactions?.find((t) =>

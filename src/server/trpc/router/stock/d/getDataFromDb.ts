@@ -1,4 +1,4 @@
-import { prisma } from "../../../db/client";
+import { prisma } from "../../../../db/client";
 
 type Prisma = typeof prisma;
 type QueryOptions = {
