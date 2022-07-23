@@ -1,7 +1,16 @@
-import type { NextPage } from "next";
+import type { GetServerSidePropsContext, NextPage } from "next";
 import dynamic from "next/dynamic";
 import { trpc } from "../utils/trpc";
 import React from "react";
+import { getAuthSession } from "~/server/common/get-server-session";
+
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
+  const session = await getAuthSession(ctx);
+  if (!session) {
+    return { redirect: { destination: "/auth/signin", permanent: false } };
+  }
+  return { props: {} };
+};
 
 const LazyStockHistoryChart = dynamic(
   async () => (await import("../components/StockHistoryChart")).StockHistoryChart,

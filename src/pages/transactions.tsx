@@ -1,11 +1,20 @@
 import React from "react";
-import { NextPage } from "next";
+import { GetServerSidePropsContext, NextPage } from "next";
 import { trpc } from "../utils/trpc";
 import { format, differenceInBusinessDays, add, isDate } from "date-fns";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PencilIcon, XIcon } from "@heroicons/react/outline";
+import { getAuthSession } from "~/server/common/get-server-session";
+
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
+  const session = await getAuthSession(ctx);
+  if (!session) {
+    return { redirect: { destination: "/auth/signin", permanent: false } };
+  }
+  return { props: {} };
+};
 
 const HomePage: NextPage = () => {
   const sectionStyle = "grid card bg-base-200 rounded-box place-items-center";
