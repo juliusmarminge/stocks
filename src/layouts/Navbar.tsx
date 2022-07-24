@@ -136,14 +136,14 @@ export const Navbar = () => {
         {/* LEFT SECTION WITH LOGO AND BURGER MENU */}
         <div className="flex-none">
           <button
-            className="md:hidden cursor-pointer hover:opacity-80"
+            className="md:hidden flex items-center cursor-pointer hover:opacity-80"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
             <MenuIcon className="w-12 h-12" />
           </button>
         </div>
 
-        <div className="flex-1">
+        <div className="flex-1 py-4">
           <Link href="/">
             <div
               className={`flex ${leftRightSize} items-center gap-2 cursor-pointer hover:opacity-80`}
