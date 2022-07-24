@@ -36,7 +36,6 @@ const TabLink: React.FC<{
 const ProfileAvatar: React.FC = () => {
   const { data: user, isLoading } = trpc.proxy.user.me.useQuery();
   const [isSigningOut, setIsSigningOut] = useState(false);
-  const router = useRouter();
 
   if (isLoading) {
     return (
@@ -74,19 +73,19 @@ const ProfileAvatar: React.FC = () => {
         className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52"
       >
         <li>
-          <a className="justify-between">
-            Profile
-            <span className="badge text-warning">Soon</span>
-          </a>
+          <Link href="/profile" className="justify-between">
+            <a>
+              Profile
+              <span className="badge text-warning">Soon</span>
+            </a>
+          </Link>
         </li>
 
         <li>
           <button
-            className={`btn btn-ghost ${isSigningOut && "loading"}`}
-            onClick={async () => {
+            onClick={() => {
               setIsSigningOut(true);
-              await signOut({ redirect: true });
-              router.push("/");
+              signOut({ redirect: true });
               setIsSigningOut(false);
             }}
           >
@@ -102,6 +101,7 @@ export const Navbar = () => {
   const { data: user, isLoading } = trpc.proxy.user.me.useQuery();
   const imgSrc = user?.image ?? UserAvatar;
 
+  const [isDarkMode, toggleDarkMode] = useDarkMode();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const router = useRouter();
@@ -147,42 +147,48 @@ export const Navbar = () => {
       </div>
       {/** End Desktop Tab Menu */}
 
-      {/** Profile Avatar Stuff */}
-      <div className="navbar-end">
+      <div className="navbar-end gap-4">
+        {/** Theme Toggle */}
+
+        <label className="items-center swap swap-rotate">
+          <input type="checkbox" checked={isDarkMode} onChange={toggleDarkMode} />
+
+          <SunIcon className="w-10 h-10 stroke-current swap-off" />
+          <MoonIcon className="w-10 h-10 stroke-current swap-on" />
+        </label>
+
+        {/** End Theme Toggle */}
+
         <ProfileAvatar />
       </div>
-      {/** End Profile Avatar Stuff */}
     </div>
   );
 };
 
-type Theme = "dark" | "light";
-const useTheme = (initialTheme: Theme = "dark") => {
-  const [currentTheme, setCurrentTheme] = useState<Theme>(initialTheme);
+const useDarkMode = () => {
+  const [usingDarkMode, setUsingDarkMode] = useState(true);
 
-  const setTheme = React.useCallback((darkMode: boolean) => {
-    const themes = { dark: "night", light: "emerald" } as const;
+  const darkTheme = "night";
+  const lightTheme = "emerald";
+  const currentTheme = usingDarkMode ? darkTheme : lightTheme;
 
-    window.document.documentElement.setAttribute(
-      "data-theme",
-      darkMode ? themes.dark : themes.light
-    );
-
-    if (darkMode) {
-      localStorage.removeItem("prefersLightTheme");
-    } else {
-      localStorage.setItem("prefersLightTheme", "true");
-    }
-
-    setCurrentTheme(darkMode ? "dark" : "light");
-  }, []);
-
+  /** Grab preffered theme from localStorage on mount */
   React.useEffect(() => {
-    const prefersLightTheme = localStorage.getItem("prefersLightTheme");
-    if (prefersLightTheme) {
-      setTheme(false);
-    }
-  }, [setTheme]);
+    const prefersDarkMode = localStorage.getItem("prefersDarkMode");
+    setUsingDarkMode(!!prefersDarkMode);
+    window.document.documentElement.setAttribute("data-theme", currentTheme);
+  }, [currentTheme]);
 
-  return [currentTheme, setTheme] as const;
+  const toggleDarkMode = () => {
+    setUsingDarkMode(!usingDarkMode);
+    window.document.documentElement.setAttribute("data-theme", currentTheme);
+
+    if (usingDarkMode) {
+      localStorage.removeItem("prefersDarkMode");
+    } else {
+      localStorage.setItem("prefersDarkMode", "true");
+    }
+  };
+
+  return [usingDarkMode, toggleDarkMode] as const;
 };
