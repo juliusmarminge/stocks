@@ -11,6 +11,7 @@ specifiers:
   '@trpc/react': ^10.0.0-alpha.38
   '@trpc/server': ^10.0.0-alpha.38
   '@types/node': 18.0.0
+  '@types/nprogress': ^0.2.0
   '@types/react': 18.0.14
   '@types/react-dom': 18.0.5
   autoprefixer: ^10.4.7
@@ -20,6 +21,7 @@ specifiers:
   eslint-config-next: 12.2.3
   next: 12.2.3
   next-auth: ^4.7.0
+  nprogress: ^0.2.0
   postcss: ^8.4.14
   prisma: ^4.0.0
   react: 18.2.0
@@ -47,6 +49,7 @@ dependencies:
   date-fns: 2.28.0
   next: 12.2.3_biqbaboplfbrettd7655fr4n2y
   next-auth: 4.7.0_biqbaboplfbrettd7655fr4n2y
+  nprogress: 0.2.0
   react: 18.2.0
   react-dom: 18.2.0_react@18.2.0
   react-hook-form: 7.33.0_react@18.2.0
@@ -58,6 +61,7 @@ dependencies:
 
 devDependencies:
   '@types/node': 18.0.0
+  '@types/nprogress': 0.2.0
   '@types/react': 18.0.14
   '@types/react-dom': 18.0.5
   autoprefixer: 10.4.7_postcss@8.4.14
@@ -394,6 +398,10 @@ packages:
 
   /@types/node/18.0.0:
     resolution: {integrity: sha512-cHlGmko4gWLVI27cGJntjs/Sj8th9aYwplmZFwmmgYQQvL5NUsgVJG7OddLvNfLqYS31KFN0s3qlaD9qCaxACA==}
+    dev: true
+
+  /@types/nprogress/0.2.0:
+    resolution: {integrity: sha512-1cYJrqq9GezNFPsWTZpFut/d4CjpZqA0vhqDUPFWYKF1oIyBz5qnoYMzR+0C/T96t3ebLAC1SSnwrVOm5/j74A==}
     dev: true
 
   /@types/prop-types/15.7.5:
@@ -1964,6 +1972,10 @@ packages:
   /normalize-range/0.1.2:
     resolution: {integrity: sha512-bdok/XvKII3nUpklnV6P2hxtMNrCboOjAcyBuQnWEhO665FwrSNRxU+AqpsyvO6LgGYPspN+lu5CLtw4jPRKNA==}
     engines: {node: '>=0.10.0'}
+
+  /nprogress/0.2.0:
+    resolution: {integrity: sha512-I19aIingLgR1fmhftnbWWO3dXc0hSxqHQHQb3H8m+K3TnEn/iSeTZZOyvKXWqQESMwuUVnatlCnZdLBZZt2VSA==}
+    dev: false
 
   /oauth/0.9.15:
     resolution: {integrity: sha512-a5ERWK1kh38ExDEfoO6qUHJb32rd7aYmPHuyCu3Fta/cnICvYmgd2uhuKXvPD+PXB+gCEYYEaQdIRAjCOwAKNA==}

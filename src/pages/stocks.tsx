@@ -31,19 +31,17 @@ const StocksPage: NextPage = () => {
     trpc.proxy.transactions.getByAuthedUser.useQuery();
 
   return (
-    <>
-      <div className="flex flex-col mt-10">
-        <div className="card h-[40vh] bg-base-200 rounded-box place-items-center">
-          <h1 className="py-2">{ticker}</h1>
-          {isLoadingStockHistory || !stockHistory ? null : (
-            <LazyStockHistoryChart
-              stockHistory={stockHistory}
-              transactions={transactions}
-            />
-          )}
-        </div>
+    <div className="flex flex-col mt-10">
+      <div className="card h-[40vh] bg-base-200 rounded-box place-items-center">
+        <h1 className="py-2">{ticker}</h1>
+        {isLoadingStockHistory || !stockHistory ? null : (
+          <LazyStockHistoryChart
+            stockHistory={stockHistory}
+            transactions={transactions}
+          />
+        )}
       </div>
-    </>
+    </div>
   );
 };
 
