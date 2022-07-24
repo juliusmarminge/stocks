@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/future/image";
 import { useRouter } from "next/router";
@@ -18,15 +18,17 @@ const TabLink: React.FC<{
   href: string;
   tabName: string;
   mobile?: boolean;
-}> = ({ href, tabName, mobile }) => {
+  closeTab?: () => void;
+}> = ({ href, tabName, mobile, closeTab }) => {
   const router = useRouter();
   const isActive = router.route === href;
   return (
     <Link href={href}>
       <a
-        className={`tab tab-bordered ${isActive && "tab-active"} ${
+        className={`tab tab-bordered bg-base-200 ${isActive && "tab-active"} ${
           mobile && "w-screen py-8"
         }`}
+        onClick={() => closeTab && closeTab()}
       >
         {tabName}
       </a>
@@ -181,11 +183,28 @@ export const Navbar = () => {
       </div>
       {/** DROPDOWN */}
       <div
-        className={`absolute flex-col ${isMenuOpen ? "flex" : "hidden"} md:hidden`}
+        className={`absolute z-[1000] flex-col ${
+          isMenuOpen ? "flex" : "hidden"
+        } md:hidden`}
       >
-        <TabLink href="/" tabName="Home" mobile />
-        <TabLink href="/stocks" tabName="Stocks" mobile />
-        <TabLink href="/transactions" tabName="Transactions" mobile />
+        <TabLink
+          href="/"
+          tabName="Home"
+          mobile
+          closeTab={() => setIsMenuOpen(false)}
+        />
+        <TabLink
+          href="/stocks"
+          tabName="Stocks"
+          mobile
+          closeTab={() => setIsMenuOpen(false)}
+        />
+        <TabLink
+          href="/transactions"
+          tabName="Transactions"
+          mobile
+          closeTab={() => setIsMenuOpen(false)}
+        />
       </div>
     </>
   );
