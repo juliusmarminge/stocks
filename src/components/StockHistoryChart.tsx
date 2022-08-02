@@ -18,36 +18,38 @@ import { type AppRouter } from "~/server/trpc/router";
 import React from "react";
 import { format, isSameDay } from "date-fns";
 
-type IProps = { cx: number; cy: number; size: number };
-const getIcon = (type: "BUY" | "SELL" | undefined, iconProps: IProps) => {
-  const { cx, cy, size } = iconProps;
+type IProps = {
+  type: "BUY" | "SELL" | undefined;
+  cx: number;
+  cy: number;
+  size: number;
+};
+const getIcon = (iconProps: IProps) => {
+  const { type, cx, cy, size } = iconProps;
   const x = cx - size / 2;
   const y = cy - size / 2;
 
-  switch (type) {
-    case "BUY":
-      return (
-        <PlusCircleIcon
-          className={"stroke-success fill-success"}
-          x={x}
-          y={y}
-          height={size}
-          width={size}
-        />
-      );
-    case "SELL":
-      return (
-        <MinusCircleIcon
-          className={"stroke-error fill-error"}
-          x={x}
-          y={y}
-          height={size}
-          width={size}
-        />
-      );
-    default:
-      return null;
-  }
+  if (type === "BUY")
+    return (
+      <PlusCircleIcon
+        className="stroke-primary fill-success"
+        x={x}
+        y={y}
+        height={size}
+        width={size}
+      />
+    );
+  if (type === "SELL")
+    return (
+      <MinusCircleIcon
+        className="stroke-error fill-error"
+        x={x}
+        y={y}
+        height={size}
+        width={size}
+      />
+    );
+  return null;
 };
 
 export const StockHistoryChart: React.FC<{
@@ -62,11 +64,7 @@ export const StockHistoryChart: React.FC<{
     );
 
     const size = props.strokeWidth * 4;
-    return getIcon(isTransaction?.type, {
-      cx: props.cx,
-      cy: props.cy,
-      size,
-    });
+    return getIcon({ type: isTransaction?.type, cx: props.cx, cy: props.cy, size });
   };
 
   return (

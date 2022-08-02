@@ -5,8 +5,17 @@ import { format, differenceInBusinessDays, add, isDate } from "date-fns";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { PencilIcon, XIcon } from "@heroicons/react/outline";
+import { XIcon } from "@heroicons/react/outline";
 import { getAuthSession } from "~/server/common/get-server-session";
+import { useAutoAnimate } from "@formkit/auto-animate/react";
+import { inferProcedureOutput } from "@trpc/server";
+import { AppRouter } from "~/server/trpc/router";
+import {
+  createColumnHelper,
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const session = await getAuthSession(ctx);
@@ -58,8 +67,6 @@ export const createTransactionValidator = z.object({
 type FormInput = z.infer<typeof createTransactionValidator>;
 
 export const CreateTransaction: React.FC = () => {
-  const transactionMutation = trpc.useMutation("transactions.create");
-  const ctx = trpc.useContext();
   const {
     register,
     handleSubmit,
@@ -69,28 +76,32 @@ export const CreateTransaction: React.FC = () => {
     resolver: zodResolver(createTransactionValidator),
   });
 
+  const utils = trpc.proxy.useContext();
+  const { mutate: createMutate, error } = trpc.proxy.transactions.create.useMutation(
+    {
+      onSuccess: () => {
+        utils.transactions.getByAuthedUser.invalidate();
+        reset(); // reset form fields
+        setIsSubmitting(false);
+      },
+      onError: (e) => {
+        console.error(e);
+        setIsSubmitting(false);
+      },
+    }
+  );
+
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
   return (
     <div className="flex flex-col w-full p-8">
       <h1 className="text-2xl font-bold">Add new transaction</h1>
+      <p className="text-error">{error?.message}</p>
       <form
         onSubmit={handleSubmit((data, e) => {
           setIsSubmitting(true);
           e?.preventDefault();
-          transactionMutation.mutate(
-            {
-              ...data,
-              transactedAt: data.transactedAt,
-            },
-            {
-              onSuccess: () => {
-                ctx.invalidateQueries("transactions.getByAuthedUser");
-                reset(); // reset form fields
-                setIsSubmitting(false);
-              },
-            }
-          );
+          createMutate(data);
         })}
       >
         {/** TRANSACTED AT */}
@@ -184,80 +195,115 @@ export const CreateTransaction: React.FC = () => {
  * Lists all available transactions
  * for the currently authenticated user
  */
-export const TransactionsListing: React.FC = () => {
-  const ctx = trpc.useContext();
-  const { data: transactions, isLoading } = trpc.useQuery([
-    "transactions.getByAuthedUser",
-  ]);
-  const deleteMutation = trpc.useMutation("transactions.delete");
+type Transaction = inferProcedureOutput<
+  AppRouter["transactions"]["getByAuthedUser"]
+>[number];
+const columnHelper = createColumnHelper<Transaction>();
 
-  const [isEditing, setIsEditing] = React.useState(false);
-  const [isMutating, setIsMutating] = React.useState<string>("");
-  const deleteTransaction = (id: string) => {
-    setIsMutating(id);
-    deleteMutation.mutate(
-      { id },
-      {
-        onSuccess: () => {
-          ctx.invalidateQueries("transactions.getByAuthedUser");
-          setIsMutating("");
+export const TransactionsListing: React.FC = () => {
+  const utils = trpc.proxy.useContext();
+  const { data, isLoading } = trpc.proxy.transactions.getByAuthedUser.useQuery();
+  const { mutate: deleteMutate } = trpc.proxy.transactions.delete.useMutation({
+    async onMutate(deletedTransaction) {
+      // Optimistic update, delete the transaction from the list immediately
+      await utils.transactions.getByAuthedUser.cancel();
+      const prevData = utils.transactions.getByAuthedUser.getData();
+      utils.transactions.getByAuthedUser.setData((old) =>
+        old!.filter((t) => t.id !== deletedTransaction.id)
+      );
+      return { prevData };
+    },
+    // Invalidate the query after the mutation is complete to sync wit server
+    onSettled() {
+      utils.transactions.getByAuthedUser.invalidate();
+    },
+  });
+
+  const [parent] = useAutoAnimate<HTMLTableSectionElement>();
+
+  const columns = React.useMemo(
+    () => [
+      columnHelper.accessor("type", {
+        cell: (t) => t.getValue(),
+        header: () => <span>Type</span>,
+      }),
+      columnHelper.accessor("transactedAt", {
+        cell: (t) => format(t.getValue(), "yyyy-MM-dd HH:mm:ss"),
+        header: () => <span>Transacted at</span>,
+      }),
+      columnHelper.accessor("stock", {
+        cell: (t) => t.getValue().toUpperCase(),
+        header: () => <span>Stock</span>,
+      }),
+      columnHelper.accessor("units", {
+        cell: (t) => t.getValue(),
+        header: () => <span>Units</span>,
+      }),
+      columnHelper.accessor("pricePerUnit", {
+        cell: (t) => `$${t.getValue()}`,
+        header: () => <span>PPU</span>,
+      }),
+      columnHelper.display({
+        id: "actions",
+        cell: (t) => {
+          const id = t.row.original.id;
+          return (
+            <button
+              className="btn btn-ghost h-6"
+              onClick={() => deleteMutate({ id })}
+            >
+              <XIcon className="h-6 w-6 stroke-error" />
+            </button>
+          );
         },
-      }
-    );
-  };
+      }),
+    ],
+    [deleteMutate]
+  );
+
+  const table = useReactTable({
+    data: data ?? ([] as Transaction[]),
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+  });
 
   if (isLoading) {
     return <div>Loading transactions...</div>;
   }
-  if (!transactions) {
+  if (!data) {
     return <div>No transactions...</div>;
   }
   return (
     <div className="w-full p-8">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Transactions</h1>
-        <button
-          className="p-2 btn btn-square btn-base btn-md"
-          onClick={() => setIsEditing(!isEditing)}
-        >
-          {isEditing ? <XIcon /> : <PencilIcon />}
-        </button>
-      </div>
-      <table className="table w-full">
+      <h1 className="text-2xl font-bold pb-4">Transactions</h1>
+
+      <table className="table table-compact w-full">
         {/** table head */}
         <thead>
-          <tr>
-            <th className="bg-base-300">Type</th>
-            <th className="bg-base-300">Transacted At</th>
-            <th className="bg-base-300">Stock</th>
-            <th className="bg-base-300">Units</th>
-            <th className="bg-base-300">PPU</th>
-            {isEditing && <th className="w-4 bg-base-300"></th>}
-          </tr>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <tr key={headerGroup.id}>
+              {headerGroup.headers.map((header) => (
+                <th key={header.id} className="bg-base-300">
+                  {header.isPlaceholder
+                    ? null
+                    : flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
+                </th>
+              ))}
+            </tr>
+          ))}
         </thead>
         {/** table body */}
-        <tbody>
-          {transactions.map((transaction) => (
-            <tr key={transaction.id} className="hover">
-              <td>{transaction.type}</td>
-              <td>{format(transaction.transactedAt, "yyyy-MM-dd HH:mm:ss")}</td>
-              <td className="uppercase">{transaction.stock}</td>
-              <td>{transaction.units}</td>
-              <td>{transaction.pricePerUnit}</td>
-              {isEditing && ( // TODO: FIX GLITCHY UI
-                <td className="px-0 mx-0 w-min">
-                  <button
-                    className={`btn btn-square btn-outline m-0 p-0 btn-sm border-0 mr-2 ${
-                      isMutating === transaction.id && "loading"
-                    }`}
-                    onClick={() => deleteTransaction(transaction.id)}
-                  >
-                    {isMutating !== transaction.id && (
-                      <XIcon className="h-4 stroke-error" />
-                    )}
-                  </button>
+        <tbody ref={parent}>
+          {table.getRowModel().rows.map((row) => (
+            <tr key={row.id} className="hover">
+              {row.getVisibleCells().map((cell) => (
+                <td key={cell.id}>
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </td>
-              )}
+              ))}
             </tr>
           ))}
         </tbody>
