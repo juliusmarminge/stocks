@@ -12,9 +12,8 @@ import { signOut } from "next-auth/react";
 import React from "react";
 
 import UserAvatar from "~/assets/user-avatar.svg";
+import { NextLink } from "~/components/nextLink";
 import { trpc } from "~/utils/trpc";
-
-import { NextLink } from "./nextLink";
 
 const tabs = [
   { name: "Home", href: "/" },
