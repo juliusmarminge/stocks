@@ -119,8 +119,10 @@ export const Navbar = () => {
 };
 
 const ProfileAvatar: React.FC = () => {
-  const { data: user, isLoading } = trpc.user.me.useQuery();
-  const [_isSigningOut, setIsSigningOut] = React.useState(false);
+  const { data: user, isLoading } = trpc.user.me.useQuery(undefined, {
+    retry: 2,
+  });
+  const [isSigningOut, setIsSigningOut] = React.useState(false);
 
   if (isLoading) {
     return (
@@ -131,10 +133,10 @@ const ProfileAvatar: React.FC = () => {
   if (!user) {
     return (
       <NextLink
-        className="avatar btn btn-circle ring ring-primary ring-offset-base-100 loading disabled"
+        className="avatar btn btn-circle ring ring-primary ring-offset-base-100 disabled"
         href="/auth/signin"
       >
-        <LoginIcon className="w-10 h-10" />
+        <LoginIcon className="w-8 h-8" />
       </NextLink>
     );
   }
@@ -173,6 +175,7 @@ const ProfileAvatar: React.FC = () => {
               void signOut({ redirect: true });
               setIsSigningOut(false);
             }}
+            className={clsx({ loading: isSigningOut })}
           >
             Logout
           </button>
