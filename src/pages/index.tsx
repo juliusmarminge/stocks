@@ -1,5 +1,4 @@
 import type { NextPage } from "next";
-import Image from "next/future/image";
 import Link from "next/link";
 
 const HomePage: NextPage = () => {

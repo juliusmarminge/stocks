@@ -1,14 +1,18 @@
 // src/pages/_app.tsx
 import "../styles/globals.css";
 import "../styles/nprogress.css";
-import type { AppType } from "next/dist/shared/lib/utils";
+import type { AppType } from "next/app";
 import { SessionProvider } from "next-auth/react";
-import { Navbar } from "../layouts/Navbar";
+import { Navbar } from "../layouts/navbar";
 import { trpc } from "../utils/trpc";
 import NProgress from "nprogress";
 import { Router } from "next/router";
+import type { Session } from "next-auth";
 
-const MyApp: AppType = ({ Component, pageProps: { session, ...pageProps } }) => {
+const MyApp: AppType<{ session: Session | null }> = ({
+  Component,
+  pageProps: { session, ...pageProps },
+}) => {
   NProgress.configure({ showSpinner: false });
   Router.events.on("routeChangeStart", () => NProgress.start());
   Router.events.on("routeChangeComplete", () => NProgress.done());

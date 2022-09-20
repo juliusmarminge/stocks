@@ -1,31 +1,29 @@
 import React from "react";
 import { GetServerSidePropsContext, NextPage } from "next";
-import { trpc } from "../utils/trpc";
+import { trpc, type InferTRPC } from "../utils/trpc";
 import { format, differenceInBusinessDays, add, isDate } from "date-fns";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { XIcon } from "@heroicons/react/outline";
-import { getAuthSession } from "~/server/common/get-server-session";
-import { useAutoAnimate } from "@formkit/auto-animate/react";
-import { inferProcedureOutput } from "@trpc/server";
-import { AppRouter } from "~/server/trpc/router";
+import { getServerSession } from "~/server/common/getServerSession";
 import {
   createColumnHelper,
   flexRender,
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import { AutoAnimate } from "~/components/autoAnimate";
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const session = await getAuthSession(ctx);
+  const session = await getServerSession(ctx);
   if (!session) {
     return { redirect: { destination: "/auth/signin", permanent: false } };
   }
   return { props: {} };
 };
 
-const HomePage: NextPage = () => {
+const TransactionsPage: NextPage = () => {
   const sectionStyle = "grid card bg-base-200 rounded-box place-items-center";
   return (
     <div className="flex flex-col w-full mt-10">
@@ -76,20 +74,18 @@ export const CreateTransaction: React.FC = () => {
     resolver: zodResolver(createTransactionValidator),
   });
 
-  const utils = trpc.proxy.useContext();
-  const { mutate: createMutate, error } = trpc.proxy.transactions.create.useMutation(
-    {
-      onSuccess: () => {
-        utils.transactions.getByAuthedUser.invalidate();
-        reset(); // reset form fields
-        setIsSubmitting(false);
-      },
-      onError: (e) => {
-        console.error(e);
-        setIsSubmitting(false);
-      },
-    }
-  );
+  const utils = trpc.useContext();
+  const { mutate: createMutate, error } = trpc.transactions.create.useMutation({
+    onSuccess: () => {
+      utils.transactions.getByAuthedUser.invalidate();
+      reset(); // reset form fields
+      setIsSubmitting(false);
+    },
+    onError: (e) => {
+      console.error(e);
+      setIsSubmitting(false);
+    },
+  });
 
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
@@ -195,20 +191,19 @@ export const CreateTransaction: React.FC = () => {
  * Lists all available transactions
  * for the currently authenticated user
  */
-type Transaction = inferProcedureOutput<
-  AppRouter["transactions"]["getByAuthedUser"]
->[number];
+type Transaction = InferTRPC["transactions"]["getByAuthedUser"]["output"][number];
 const columnHelper = createColumnHelper<Transaction>();
 
 export const TransactionsListing: React.FC = () => {
-  const utils = trpc.proxy.useContext();
-  const { data, isLoading } = trpc.proxy.transactions.getByAuthedUser.useQuery();
-  const { mutate: deleteMutate } = trpc.proxy.transactions.delete.useMutation({
+  const utils = trpc.useContext();
+  const { data, isLoading } = trpc.transactions.getByAuthedUser.useQuery();
+  const { mutate: deleteMutate } = trpc.transactions.delete.useMutation({
     async onMutate(deletedTransaction) {
       // Optimistic update, delete the transaction from the list immediately
       await utils.transactions.getByAuthedUser.cancel();
       const prevData = utils.transactions.getByAuthedUser.getData();
-      utils.transactions.getByAuthedUser.setData((old) =>
+      // FIXME: REMOVE EXPLICIT TYPE
+      utils.transactions.getByAuthedUser.setData((old: Transaction[] | undefined) =>
         old!.filter((t) => t.id !== deletedTransaction.id)
       );
       return { prevData };
@@ -218,8 +213,6 @@ export const TransactionsListing: React.FC = () => {
       utils.transactions.getByAuthedUser.invalidate();
     },
   });
-
-  const [parent] = useAutoAnimate<HTMLTableSectionElement>();
 
   const columns = React.useMemo(
     () => [
@@ -296,7 +289,7 @@ export const TransactionsListing: React.FC = () => {
           ))}
         </thead>
         {/** table body */}
-        <tbody ref={parent}>
+        <AutoAnimate as="tbody">
           {table.getRowModel().rows.map((row) => (
             <tr key={row.id} className="hover">
               {row.getVisibleCells().map((cell) => (
@@ -306,10 +299,10 @@ export const TransactionsListing: React.FC = () => {
               ))}
             </tr>
           ))}
-        </tbody>
+        </AutoAnimate>
       </table>
     </div>
   );
 };
 
-export default HomePage;
+export default TransactionsPage;

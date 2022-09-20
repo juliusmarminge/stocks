@@ -2,10 +2,10 @@
 import * as trpc from "@trpc/server";
 import * as trpcNext from "@trpc/server/adapters/next";
 import { prisma } from "~/server/db/client";
-import { getAuthSession } from "~/server/common/get-server-session";
+import { getServerSession } from "~/server/common/getServerSession";
 
 export const createContext = async (opts: trpcNext.CreateNextContextOptions) => {
-  const session = await getAuthSession(opts);
+  const session = await getServerSession(opts);
   return {
     prisma,
     session,

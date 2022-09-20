@@ -5,10 +5,7 @@ import {
   XAxis,
   YAxis,
   Tooltip,
-  Brush,
   CartesianGrid,
-  Legend,
-  Dot,
 } from "recharts";
 
 import { PlusCircleIcon, MinusCircleIcon } from "@heroicons/react/solid";
@@ -52,7 +49,7 @@ const getIcon = (iconProps: IProps) => {
   return null;
 };
 
-export const StockHistoryChart: React.FC<{
+export const StockChart: React.FC<{
   stockHistory: inferProcedureOutput<AppRouter["stocks"]["getByAuthedUser"]>;
   transactions:
     | inferProcedureOutput<AppRouter["transactions"]["getByAuthedUser"]>
@@ -64,7 +61,12 @@ export const StockHistoryChart: React.FC<{
     );
 
     const size = props.strokeWidth * 4;
-    return getIcon({ type: isTransaction?.type, cx: props.cx, cy: props.cy, size });
+    return getIcon({
+      type: isTransaction?.type,
+      cx: props.cx,
+      cy: props.cy,
+      size,
+    });
   };
 
   return (

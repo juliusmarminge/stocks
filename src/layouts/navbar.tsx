@@ -34,7 +34,7 @@ const TabLink: React.FC<{
 };
 
 const ProfileAvatar: React.FC = () => {
-  const { data: user, isLoading } = trpc.proxy.user.me.useQuery();
+  const { data: user, isLoading } = trpc.user.me.useQuery();
   const [isSigningOut, setIsSigningOut] = useState(false);
 
   if (isLoading) {
@@ -98,7 +98,7 @@ const ProfileAvatar: React.FC = () => {
 };
 
 export const Navbar = () => {
-  const { data: user, isLoading } = trpc.proxy.user.me.useQuery();
+  const { data: user, isLoading } = trpc.user.me.useQuery();
   const imgSrc = user?.image ?? UserAvatar;
 
   const [isDarkMode, toggleDarkMode] = useDarkMode();

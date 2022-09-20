@@ -12,14 +12,14 @@ import TwitterIcon from "~/assets/twitter.svg";
 import toast from "react-hot-toast";
 import dynamic from "next/dynamic";
 import Image from "next/future/image";
-import { getAuthSession } from "~/server/common/get-server-session";
+import { getServerSession } from "~/server/common/getServerSession";
 
 const LazyToaster = dynamic(async () => (await import("react-hot-toast")).Toaster, {
   ssr: false,
 });
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const session = await getAuthSession(ctx);
+  const session = await getServerSession(ctx);
 
   if (session) {
     /** redirect to home if signed in */

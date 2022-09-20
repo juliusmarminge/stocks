@@ -17,7 +17,8 @@ export const stockRouter = t.router({
 
       const dataFromDb = await getDataFromDb(ctx.prisma, { ...input });
       const firstDayFromDb = dataFromDb[0]?.date ?? endDate;
-      const lastDayFromDb = dataFromDb[dataFromDb.length - 1]?.date ?? startDate;
+      const lastDayFromDb =
+        dataFromDb[dataFromDb.length - 1]?.date ?? startDate;
 
       const priorData = await getPriorData(ctx.prisma, {
         ticker,
