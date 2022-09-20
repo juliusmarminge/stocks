@@ -107,8 +107,8 @@ export const Navbar = () => {
             onChange={toggleDarkMode}
           />
 
-          <SunIcon className="swap-on h-10 w-10 stroke-current" />
-          <MoonIcon className="swap-off h-10 w-10 stroke-current" />
+          <SunIcon className="swap-off h-10 w-10 stroke-current" />
+          <MoonIcon className="swap-on h-10 w-10 stroke-current" />
         </label>
         {/** End Theme Toggle */}
 
