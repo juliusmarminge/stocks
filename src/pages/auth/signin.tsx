@@ -1,22 +1,26 @@
-import { getProviders, signIn } from "next-auth/react";
 import type {
-  NextPage,
   GetServerSidePropsContext,
   InferGetServerSidePropsType,
+  NextPage,
 } from "next";
+import dynamic from "next/dynamic";
+import Image, { type StaticImageData } from "next/future/image";
 import { useRouter } from "next/router";
-import GithubIcon from "~/assets/github.svg";
+import { getProviders, signIn } from "next-auth/react";
+import toast from "react-hot-toast";
+
 import DiscordIcon from "~/assets/discord.svg";
+import GithubIcon from "~/assets/github.svg";
 import GoogleIcon from "~/assets/google.svg";
 import TwitterIcon from "~/assets/twitter.svg";
-import toast from "react-hot-toast";
-import dynamic from "next/dynamic";
-import Image from "next/future/image";
 import { getServerSession } from "~/server/common/getServerSession";
 
-const LazyToaster = dynamic(async () => (await import("react-hot-toast")).Toaster, {
-  ssr: false,
-});
+const LazyToaster = dynamic(
+  async () => (await import("react-hot-toast")).Toaster,
+  {
+    ssr: false,
+  },
+);
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const session = await getServerSession(ctx);
@@ -39,14 +43,14 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
 
 const Provider: React.FC<{
   provider: string;
-  icon: any;
+  icon: StaticImageData;
   includeAltText?: boolean;
   spanFull?: boolean;
 }> = ({ provider, icon, includeAltText, spanFull }) => {
   return (
     <button
       className={`btn btn-primary gap-2 ${spanFull && "flex-1"}`}
-      onClick={() => signIn(provider)}
+      onClick={() => void signIn(provider)}
     >
       <Image src={icon} alt="" height={32} width={32} />
       {includeAltText && "Sign in with"} {provider}
@@ -67,7 +71,7 @@ const SignInPage: NextPage<
           color: "currentColor",
         },
         duration: 5000,
-      }
+      },
     );
   }
 

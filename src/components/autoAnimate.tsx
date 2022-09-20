@@ -1,5 +1,5 @@
-import { ElementType, HTMLAttributes } from "react";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
+import { ElementType, HTMLAttributes } from "react";
 
 interface Props extends HTMLAttributes<HTMLElement> {
   as?: ElementType;

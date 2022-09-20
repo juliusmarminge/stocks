@@ -1,7 +1,9 @@
-import { t, authedProcedure } from "../../utils";
-import { z } from "zod";
-import { createTransactionValidator } from "~/pages/transactions";
 import { TRPCError } from "@trpc/server";
+import { z } from "zod";
+
+import { createTransactionValidator } from "~/pages/transactions";
+
+import { authedProcedure, t } from "../../utils";
 
 export const transactionRouter = t.router({
   getByAuthedUser: authedProcedure
@@ -25,7 +27,7 @@ export const transactionRouter = t.router({
     .input(
       z.object({
         id: z.string().uuid(),
-      })
+      }),
     )
     .mutation(async ({ input, ctx }) => {
       return await ctx.prisma.transaction.delete({
@@ -68,7 +70,7 @@ export const transactionRouter = t.router({
             amount: currentAmount.amount - input.units,
           },
         });
-      } else if (input.type === "BUY") {
+      } else {
         if (currentAmount) {
           await ctx.prisma.possesion.update({
             where: {

@@ -1,10 +1,12 @@
 import type { GetServerSidePropsContext, NextPage } from "next";
 import dynamic from "next/dynamic";
-import { trpc } from "../utils/trpc";
-import React from "react";
-import { getServerSession } from "~/server/common/getServerSession";
-import loader from "~/assets/loader.svg";
 import Image from "next/future/image";
+import React from "react";
+
+import loader from "~/assets/loader.svg";
+import { getServerSession } from "~/server/common/getServerSession";
+
+import { trpc } from "../utils/trpc";
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const session = await getServerSession(ctx);
@@ -18,7 +20,7 @@ const LazyStockHistoryChart = dynamic(
   async () => (await import("../components/stockChart")).StockChart,
   {
     ssr: false, // chart is buggy when rendered on server
-  }
+  },
 );
 
 const Spinner = () => (
@@ -26,6 +28,8 @@ const Spinner = () => (
 );
 
 const PossesionView: React.FC<{
+  // TODO: possesion router
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   possesion: any;
   startDate: Date;
   endDate: Date;
@@ -38,8 +42,9 @@ const PossesionView: React.FC<{
       endDate,
     });
 
-  const { data: transactions, isLoading: isLoadingTransactions } =
-    trpc.transactions.getByAuthedUser.useQuery({ ticker });
+  const { data: transactions } = trpc.transactions.getByAuthedUser.useQuery({
+    ticker,
+  });
 
   if (isLoadingStockHistory) return <Spinner />;
   return (
@@ -60,8 +65,7 @@ const PossesionView: React.FC<{
 };
 
 const StocksPage: NextPage = () => {
-  const ticker = "TSLA";
-  const startDate = new Date("2022-04-01");
+  const startDate = new Date("2022-01-01");
   const endDate = React.useMemo(() => new Date(), []);
 
   const { data: userPossesion, isLoading: isLoadingPossesion } =

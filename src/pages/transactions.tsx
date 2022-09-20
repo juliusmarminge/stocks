@@ -1,19 +1,21 @@
-import React from "react";
-import { GetServerSidePropsContext, NextPage } from "next";
-import { trpc, type InferTRPC } from "../utils/trpc";
-import { format, differenceInBusinessDays, add, isDate } from "date-fns";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { XIcon } from "@heroicons/react/outline";
-import { getServerSession } from "~/server/common/getServerSession";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   createColumnHelper,
   flexRender,
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import { add, differenceInBusinessDays, format, isDate } from "date-fns";
+import { GetServerSidePropsContext, NextPage } from "next";
+import React from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+
 import { AutoAnimate } from "~/components/autoAnimate";
+import { getServerSession } from "~/server/common/getServerSession";
+
+import { type InferTRPC, trpc } from "../utils/trpc";
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const session = await getServerSession(ctx);
@@ -76,8 +78,8 @@ export const CreateTransaction: React.FC = () => {
 
   const utils = trpc.useContext();
   const { mutate: createMutate, error } = trpc.transactions.create.useMutation({
-    onSuccess: () => {
-      utils.transactions.getByAuthedUser.invalidate();
+    onSuccess() {
+      void utils.transactions.getByAuthedUser.invalidate();
       reset(); // reset form fields
       setIsSubmitting(false);
     },
@@ -94,18 +96,21 @@ export const CreateTransaction: React.FC = () => {
       <h1 className="text-2xl font-bold">Add new transaction</h1>
       <p className="text-error">{error?.message}</p>
       <form
-        onSubmit={handleSubmit((data, e) => {
-          setIsSubmitting(true);
-          e?.preventDefault();
-          createMutate(data);
-        })}
+        onSubmit={
+          void handleSubmit((data, e) => {
+            setIsSubmitting(true);
+            e?.preventDefault();
+            createMutate(data);
+          })
+        }
       >
         {/** TRANSACTED AT */}
         <div className="my-4 input-group input-group-vertical">
           <span className="bg-base-300">Transacted at</span>
           <input
             {...register("transactedAt", {
-              setValueAs: (v: string) => (v.length === 0 ? new Date() : new Date(v)),
+              setValueAs: (v: string) =>
+                v.length === 0 ? new Date() : new Date(v),
             })}
             placeholder="Enter a Date-parsable string. Leave blank for Date.now()"
             className="input input-bordered placeholder:italic"
@@ -191,7 +196,8 @@ export const CreateTransaction: React.FC = () => {
  * Lists all available transactions
  * for the currently authenticated user
  */
-type Transaction = InferTRPC["transactions"]["getByAuthedUser"]["output"][number];
+type Transaction =
+  InferTRPC["transactions"]["getByAuthedUser"]["output"][number];
 const columnHelper = createColumnHelper<Transaction>();
 
 export const TransactionsListing: React.FC = () => {
@@ -203,14 +209,15 @@ export const TransactionsListing: React.FC = () => {
       await utils.transactions.getByAuthedUser.cancel();
       const prevData = utils.transactions.getByAuthedUser.getData();
       // FIXME: REMOVE EXPLICIT TYPE
-      utils.transactions.getByAuthedUser.setData((old: Transaction[] | undefined) =>
-        old!.filter((t) => t.id !== deletedTransaction.id)
+      utils.transactions.getByAuthedUser.setData(
+        (old: Transaction[] | undefined) =>
+          old?.filter((t) => t.id !== deletedTransaction.id),
       );
       return { prevData };
     },
     // Invalidate the query after the mutation is complete to sync wit server
     onSettled() {
-      utils.transactions.getByAuthedUser.invalidate();
+      void utils.transactions.getByAuthedUser.invalidate();
     },
   });
 
@@ -251,7 +258,7 @@ export const TransactionsListing: React.FC = () => {
         },
       }),
     ],
-    [deleteMutate]
+    [deleteMutate],
   );
 
   const table = useReactTable({
@@ -281,7 +288,7 @@ export const TransactionsListing: React.FC = () => {
                     ? null
                     : flexRender(
                         header.column.columnDef.header,
-                        header.getContext()
+                        header.getContext(),
                       )}
                 </th>
               ))}

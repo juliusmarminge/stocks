@@ -1,7 +1,8 @@
-import { authedProcedure, t } from "../../utils";
-import { getDataFromDb } from "./d/getDataFromDb";
-import { getLatterData, getPriorData } from "./d/complementDbData";
 import { z } from "zod";
+
+import { authedProcedure, t } from "../../utils";
+import { getLatterData, getPriorData } from "./d/complementDbData";
+import { getDataFromDb } from "./d/getDataFromDb";
 
 export const getStockValidator = z.object({
   ticker: z.string(),

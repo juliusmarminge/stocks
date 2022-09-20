@@ -1,3 +1,5 @@
+import { env as _env } from "./src/env/server.mjs";
+
 /**
  * Don't be scared of the generics here.
  * All they do is to give us autocompletion when using this.
@@ -12,15 +14,14 @@ function defineNextConfig(config) {
 
 export default defineNextConfig({
   reactStrictMode: true,
-  experimental: {
-    images: {
-      allowFutureImage: true,
-      remotePatterns: [
-        {
-          protocol: "https",
-          hostname: "**.com",
-        },
-      ],
-    },
+  swcMinify: true,
+  allowFutureImage: true,
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "**.com",
+      },
+    ],
   },
 });

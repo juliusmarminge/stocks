@@ -1,13 +1,15 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { restClient } from "@polygon.io/client-js";
+import { add, differenceInBusinessDays, format, sub } from "date-fns";
+
 import { prisma } from "../../../../db/client";
-import { format, sub, add, differenceInBusinessDays } from "date-fns";
 
 type Prisma = typeof prisma;
-type QueryOptions = {
+interface QueryOptions {
   ticker: string;
   fromDate: string;
   toDate: string;
-};
+}
 export const fillDbFromApi = async (prisma: Prisma, opts: QueryOptions) => {
   const { ticker, fromDate, toDate } = opts;
   const restApiClient = restClient(process.env.POLYGON_API_KEY);
@@ -17,7 +19,7 @@ export const fillDbFromApi = async (prisma: Prisma, opts: QueryOptions) => {
     1,
     "day",
     fromDate,
-    toDate
+    toDate,
   );
 
   if (newRows.results) {
@@ -39,11 +41,11 @@ export const fillDbFromApi = async (prisma: Prisma, opts: QueryOptions) => {
   }
 };
 
-type PriorOptions = {
+interface PriorOptions {
   ticker: string;
   firstDayFromDb: Date;
   startDate: Date;
-};
+}
 export const getPriorData = async (prisma: Prisma, opts: PriorOptions) => {
   const { ticker, firstDayFromDb, startDate } = opts;
 
@@ -62,11 +64,11 @@ export const getPriorData = async (prisma: Prisma, opts: PriorOptions) => {
   return newRows;
 };
 
-type LatterOptions = {
+interface LatterOptions {
   ticker: string;
   lastDayFromDb: Date;
   endDate: Date;
-};
+}
 export const getLatterData = async (prisma: Prisma, opts: LatterOptions) => {
   const { ticker, lastDayFromDb, endDate } = opts;
 

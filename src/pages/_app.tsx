@@ -1,13 +1,15 @@
 // src/pages/_app.tsx
 import "../styles/globals.css";
 import "../styles/nprogress.css";
+
 import type { AppType } from "next/app";
-import { SessionProvider } from "next-auth/react";
-import { Navbar } from "../layouts/navbar";
-import { trpc } from "../utils/trpc";
-import NProgress from "nprogress";
 import { Router } from "next/router";
 import type { Session } from "next-auth";
+import { SessionProvider } from "next-auth/react";
+import NProgress from "nprogress";
+
+import { Navbar } from "../components/navbar";
+import { trpc } from "../utils/trpc";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,

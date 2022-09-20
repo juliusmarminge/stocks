@@ -1,11 +1,11 @@
 import { prisma } from "../../../../db/client";
 
 type Prisma = typeof prisma;
-type QueryOptions = {
+interface QueryOptions {
   ticker: string;
   startDate: Date;
   endDate: Date;
-};
+}
 
 export const getDataFromDb = async (prisma: Prisma, opts: QueryOptions) => {
   const { ticker, startDate, endDate } = opts;

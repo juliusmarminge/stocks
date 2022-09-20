@@ -1,22 +1,23 @@
-import NextAuth, { type NextAuthOptions } from "next-auth";
-import GithubProvider from "next-auth/providers/github";
-import DiscordProvider from "next-auth/providers/discord";
-
 // Prisma adapter for NextAuth, optional and can be removed
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import { prisma } from "../../../server/db/client";
+import NextAuth, { type NextAuthOptions } from "next-auth";
+import DiscordProvider from "next-auth/providers/discord";
+import GithubProvider from "next-auth/providers/github";
+
+import { env } from "~/env/server.mjs";
+import { prisma } from "~/server/db/client";
 
 export const authOptions: NextAuthOptions = {
   // Configure one or more authentication providers
   adapter: PrismaAdapter(prisma),
   providers: [
     GithubProvider({
-      clientId: process.env.GITHUB_ID,
-      clientSecret: process.env.GITHUB_SECRET,
+      clientId: env.GITHUB_ID,
+      clientSecret: env.GITHUB_SECRET,
     }),
     DiscordProvider({
-      clientId: process.env.DISCORD_CLIENT_ID as string,
-      clientSecret: process.env.DISCORD_CLIENT_SECRET as string,
+      clientId: env.DISCORD_CLIENT_ID,
+      clientSecret: env.DISCORD_CLIENT_SECRET,
     }),
     // ...add more providers here
   ],
@@ -24,7 +25,7 @@ export const authOptions: NextAuthOptions = {
     signIn: "/auth/signin",
   },
   callbacks: {
-    async session({ session, user }) {
+    session({ session, user }) {
       session.user.id = user.id;
       return session;
     },

@@ -1,26 +1,25 @@
+import { MinusCircleIcon, PlusCircleIcon } from "@heroicons/react/solid";
+import type { inferProcedureOutput } from "@trpc/server";
+import { format, isSameDay } from "date-fns";
+import React from "react";
 import {
-  ResponsiveContainer,
-  LineChart,
+  CartesianGrid,
   Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  Tooltip,
-  CartesianGrid,
 } from "recharts";
 
-import { PlusCircleIcon, MinusCircleIcon } from "@heroicons/react/solid";
-
-import type { inferProcedureOutput } from "@trpc/server";
 import { type AppRouter } from "~/server/trpc/router";
-import React from "react";
-import { format, isSameDay } from "date-fns";
 
-type IProps = {
+interface IProps {
   type: "BUY" | "SELL" | undefined;
   cx: number;
   cy: number;
   size: number;
-};
+}
 const getIcon = (iconProps: IProps) => {
   const { type, cx, cy, size } = iconProps;
   const x = cx - size / 2;
@@ -55,9 +54,11 @@ export const StockChart: React.FC<{
     | inferProcedureOutput<AppRouter["transactions"]["getByAuthedUser"]>
     | undefined;
 }> = ({ stockHistory, transactions }) => {
+  // FIXME: Look into proper types for this
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const CustomizedDot: React.FC<any> = (props: any) => {
     const isTransaction = transactions?.find((t) =>
-      isSameDay(t.transactedAt, props.payload.date)
+      isSameDay(t.transactedAt, props.payload.date),
     );
 
     const size = props.strokeWidth * 4;

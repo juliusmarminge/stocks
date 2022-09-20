@@ -8,10 +8,10 @@ const HomePage: NextPage = () => {
         <div className="max-w-lg">
           <h1 className="text-5xl font-bold">Welcome</h1>
           <p className="py-4">
-            <span className="italic">Stocks</span> is a simple web app to track your
-            stocks and transactions. You will be able to add transactions you have
-            made on different financial services and have a place to see all of them
-            together.
+            <span className="italic">Stocks</span> is a simple web app to track
+            your stocks and transactions. You will be able to add transactions
+            you have made on different financial services and have a place to
+            see all of them together.
           </p>
           <p className="pb-4 italic text-warning">
             App is work in progress. You can find the source code here:
