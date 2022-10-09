@@ -3,9 +3,9 @@ import { z } from "zod";
 
 import { createTransactionValidator } from "~/pages/transactions";
 
-import { authedProcedure, t } from "../../utils";
+import { authedProcedure, createRouter } from "../../trpc";
 
-export const transactionRouter = t.router({
+export const transactionRouter = createRouter({
   getByAuthedUser: authedProcedure
     .input(z.object({ ticker: z.string() }).nullish())
     .query(async ({ ctx, input }) => {

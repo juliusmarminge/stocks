@@ -1,11 +1,11 @@
 // src/server/router/index.ts
-import { t } from "../utils";
+import { createRouter } from "../trpc";
 import { possesionRouter } from "./possesion";
 import { stockRouter } from "./stock";
 import { transactionRouter } from "./transaction";
 import { userRouter } from "./user";
 
-export const appRouter = t.router({
+export const appRouter = createRouter({
   transactions: transactionRouter,
   stocks: stockRouter,
   user: userRouter,

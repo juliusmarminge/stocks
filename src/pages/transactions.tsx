@@ -7,23 +7,15 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { add, differenceInBusinessDays, format, isDate } from "date-fns";
-import { GetServerSidePropsContext, NextPage } from "next";
+import { NextPage } from "next";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { AutoAnimate } from "~/components/autoAnimate";
-import { getServerSession } from "~/server/common/getServerSession";
+import { protectPage } from "~/server/common/gSSPPageProtection";
 
 import { type InferTRPC, trpc } from "../utils/trpc";
-
-export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const session = await getServerSession(ctx);
-  if (!session) {
-    return { redirect: { destination: "/auth/signin", permanent: false } };
-  }
-  return { props: {} };
-};
 
 const TransactionsPage: NextPage = () => {
   const sectionStyle = "grid card bg-base-200 rounded-box place-items-center";
@@ -312,4 +304,5 @@ export const TransactionsListing: React.FC = () => {
   );
 };
 
+export const getServerSideProps = protectPage;
 export default TransactionsPage;

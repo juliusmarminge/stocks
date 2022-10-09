@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { authedProcedure, t } from "../../utils";
+import { authedProcedure, createRouter } from "../../trpc";
 import { getLatterData, getPriorData } from "./d/complementDbData";
 import { getDataFromDb } from "./d/getDataFromDb";
 
@@ -10,7 +10,7 @@ export const getStockValidator = z.object({
   endDate: z.date(),
 });
 
-export const stockRouter = t.router({
+export const stockRouter = createRouter({
   getByAuthedUser: authedProcedure
     .input(getStockValidator)
     .query(async ({ input, ctx }) => {

@@ -15,13 +15,7 @@ function defineNextConfig(config) {
 export default defineNextConfig({
   reactStrictMode: true,
   swcMinify: true,
-  allowFutureImage: true,
   images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "**.com",
-      },
-    ],
+    remotePatterns: [{ hostname: "example.com" }],
   },
 });

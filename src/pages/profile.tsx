@@ -1,3 +1,5 @@
+import { protectPage } from "~/server/common/gSSPPageProtection";
+
 const ProfilePage = () => {
   return (
     <div>
@@ -5,4 +7,6 @@ const ProfilePage = () => {
     </div>
   );
 };
+
 export default ProfilePage;
+export const getServerSideProps = protectPage;

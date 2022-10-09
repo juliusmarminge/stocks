@@ -1,12 +1,7 @@
 // src/utils/trpc.ts
 import { httpBatchLink } from "@trpc/client";
 import { createTRPCNext } from "@trpc/next";
-import type {
-  AnyProcedure,
-  AnyRouter,
-  inferProcedureInput,
-  inferProcedureOutput,
-} from "@trpc/server";
+import type { GetInferenceHelpers } from "@trpc/server";
 import superjson from "superjson";
 
 import type { AppRouter } from "../server/trpc/router";
@@ -27,23 +22,5 @@ export const trpc = createTRPCNext<AppRouter>({
   },
   ssr: false,
 });
-
-/** Custom inference handlers to skip double imports in every file */
-type HandleInferenceHelpers<
-  TRouterOrProcedure extends AnyRouter | AnyProcedure,
-> = TRouterOrProcedure extends AnyRouter
-  ? GetInferenceHelpers<TRouterOrProcedure>
-  : TRouterOrProcedure extends AnyProcedure
-  ? {
-      input: inferProcedureInput<TRouterOrProcedure>;
-      output: inferProcedureOutput<TRouterOrProcedure>;
-    }
-  : never;
-
-type GetInferenceHelpers<TRouter extends AnyRouter> = {
-  [TKey in keyof TRouter["_def"]["record"]]: HandleInferenceHelpers<
-    TRouter["_def"]["record"][TKey]
-  >;
-};
 
 export type InferTRPC = GetInferenceHelpers<AppRouter>;

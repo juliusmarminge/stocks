@@ -3,12 +3,16 @@ import superjson from "superjson";
 
 import type { Context } from "./context";
 
-export const t = initTRPC.context<Context>().create({
+const t = initTRPC.context<Context>().create({
   transformer: superjson,
   errorFormatter({ shape }) {
     return shape;
   },
 });
+
+export const createRouter = t.router;
+
+export const baseProcedure = t.procedure;
 
 export const authedProcedure = t.procedure.use(({ ctx, next }) => {
   if (!ctx.session) {

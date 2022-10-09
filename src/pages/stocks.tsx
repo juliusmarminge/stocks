@@ -1,20 +1,12 @@
-import type { GetServerSidePropsContext, NextPage } from "next";
+import type { NextPage } from "next";
 import dynamic from "next/dynamic";
 import Image from "next/future/image";
 import React from "react";
 
 import loader from "~/assets/loader.svg";
-import { getServerSession } from "~/server/common/getServerSession";
+import { protectPage } from "~/server/common/gSSPPageProtection";
 
 import { trpc } from "../utils/trpc";
-
-export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const session = await getServerSession(ctx);
-  if (!session) {
-    return { redirect: { destination: "/auth/signin", permanent: false } };
-  }
-  return { props: {} };
-};
 
 const LazyStockHistoryChart = dynamic(
   async () => (await import("../components/stockChart")).StockChart,
@@ -87,4 +79,5 @@ const StocksPage: NextPage = () => {
   );
 };
 
+export const getServerSideProps = protectPage;
 export default StocksPage;
