@@ -1,10 +1,10 @@
 import {
-  CurrencyDollarIcon,
-  LoginIcon,
-  MenuIcon,
-  MoonIcon,
-  SunIcon,
-} from "@heroicons/react/outline";
+  HiOutlineSun,
+  HiOutlineMoon,
+  HiOutlineMenu,
+  HiOutlineLogin,
+  HiOutlineCurrencyDollar,
+} from "react-icons/hi";
 import clsx from "clsx";
 import Image from "next/future/image";
 import { useRouter } from "next/router";
@@ -61,7 +61,7 @@ export const Navbar = () => {
             className="btn btn-ghost lg:hidden"
             onClick={() => setIsDropDownOpen(!isDropDownOpen)}
           >
-            <MenuIcon
+            <HiOutlineMenu
               className={clsx("inline-block h-10 w-10 transition-transform", {
                 "rotate-90": isDropDownOpen,
               })}
@@ -78,8 +78,8 @@ export const Navbar = () => {
         {/** Logo */}
         <div className="flex-1 py-4">
           <NextLink href="/">
-            <div className="flex items-center gap-2 cursor-pointer hover:opacity-80">
-              <CurrencyDollarIcon className="w-8 aspect-square" />
+            <div className="flex cursor-pointer items-center gap-2 hover:opacity-80">
+              <HiOutlineCurrencyDollar className="aspect-square w-8" />
               <h1 className="text-3xl font-bold">Stocks</h1>
             </div>
           </NextLink>
@@ -100,15 +100,15 @@ export const Navbar = () => {
 
       <div className="navbar-end gap-4">
         {/** Theme Toggle */}
-        <label className="swap swap-rotate items-center">
+        <label className="swap-rotate swap items-center">
           <input
             type="checkbox"
             checked={isDarkMode}
             onChange={toggleDarkMode}
           />
 
-          <SunIcon className="swap-off h-10 w-10 stroke-current" />
-          <MoonIcon className="swap-on h-10 w-10 stroke-current" />
+          <HiOutlineSun className="swap-off h-10 w-10 stroke-current" />
+          <HiOutlineMoon className="swap-on h-10 w-10 stroke-current" />
         </label>
         {/** End Theme Toggle */}
 
@@ -126,17 +126,17 @@ const ProfileAvatar: React.FC = () => {
 
   if (isLoading) {
     return (
-      <button className="avatar btn btn-circle ring ring-primary ring-offset-base-100 loading disabled" />
+      <button className="avatar btn btn-circle loading disabled ring ring-primary ring-offset-base-100" />
     );
   }
 
   if (!user) {
     return (
       <NextLink
-        className="avatar btn btn-circle ring ring-primary ring-offset-base-100 disabled"
+        className="avatar btn btn-circle disabled ring ring-primary ring-offset-base-100"
         href="/auth/signin"
       >
-        <LoginIcon className="w-8 h-8" />
+        <HiOutlineLogin className="h-8 w-8" />
       </NextLink>
     );
   }
@@ -144,9 +144,9 @@ const ProfileAvatar: React.FC = () => {
   const imgSrc = user.image ?? UserAvatar;
 
   return (
-    <div className="dropdown dropdown-end">
+    <div className="dropdown-end dropdown">
       <label tabIndex={0} className="avatar btn btn-circle">
-        <div className="relative w-10 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
+        <div className="relative w-10 rounded-full ring ring-primary ring-offset-2 ring-offset-base-100">
           <Image
             src={imgSrc}
             alt={user.name ?? "Profile picture"}
@@ -157,7 +157,7 @@ const ProfileAvatar: React.FC = () => {
       </label>
       <ul
         tabIndex={0}
-        className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52"
+        className="dropdown-content menu rounded-box menu-compact mt-3 w-52 bg-base-100 p-2 shadow"
       >
         <li>
           <NextLink href="/profile" className="justify-between">

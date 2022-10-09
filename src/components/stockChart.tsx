@@ -1,4 +1,4 @@
-import { MinusCircleIcon, PlusCircleIcon } from "@heroicons/react/solid";
+import { HiMinusCircle, HiPlusCircle } from "react-icons/hi";
 import type { inferProcedureOutput } from "@trpc/server";
 import { format, isSameDay } from "date-fns";
 import React from "react";
@@ -27,8 +27,8 @@ const getIcon = (iconProps: IProps) => {
 
   if (type === "BUY")
     return (
-      <PlusCircleIcon
-        className="stroke-primary fill-success"
+      <HiPlusCircle
+        className="fill-success stroke-primary"
         x={x}
         y={y}
         height={size}
@@ -37,8 +37,8 @@ const getIcon = (iconProps: IProps) => {
     );
   if (type === "SELL")
     return (
-      <MinusCircleIcon
-        className="stroke-error fill-error"
+      <HiMinusCircle
+        className="fill-error stroke-error"
         x={x}
         y={y}
         height={size}
@@ -71,7 +71,7 @@ export const StockChart: React.FC<{
   };
 
   return (
-    <div className="w-full h-full min-h-md text-primary">
+    <div className="min-h-md h-full w-full text-primary">
       <ResponsiveContainer>
         <LineChart
           key={Math.random()} // to keep dots rendering
