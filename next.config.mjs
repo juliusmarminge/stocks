@@ -16,6 +16,6 @@ export default defineNextConfig({
   reactStrictMode: true,
   swcMinify: true,
   images: {
-    remotePatterns: [{ hostname: "example.com" }],
+    remotePatterns: [{ hostname: "avatars.githubusercontent.com" }],
   },
 });

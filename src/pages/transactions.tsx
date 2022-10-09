@@ -11,7 +11,7 @@ import React from "react";
 
 import { AutoAnimate } from "~/components/autoAnimate";
 import { protectPage } from "~/server/common/gSSPPageProtection";
-import { createTransactionValidator } from "~/server/trpc/router/transaction";
+import { createTransactionValidator } from "~/server/trpc/validators";
 import { useZodForm } from "~/utils/zodForm";
 
 import { type InferTRPC, trpc } from "../utils/trpc";
