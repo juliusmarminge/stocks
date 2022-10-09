@@ -1,19 +1,18 @@
 import { XIcon } from "@heroicons/react/outline";
-import { zodResolver } from "@hookform/resolvers/zod";
 import {
   createColumnHelper,
   flexRender,
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { add, differenceInBusinessDays, format, isDate } from "date-fns";
+import { format } from "date-fns";
 import { NextPage } from "next";
 import React from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
 
 import { AutoAnimate } from "~/components/autoAnimate";
 import { protectPage } from "~/server/common/gSSPPageProtection";
+import { createTransactionValidator } from "~/server/trpc/router/transaction";
+import { useZodForm } from "~/utils/zodForm";
 
 import { type InferTRPC, trpc } from "../utils/trpc";
 
@@ -32,51 +31,23 @@ const TransactionsPage: NextPage = () => {
   );
 };
 
-/** add one day until we're on a business day */
-const getNextBusinessDay = (date: Date) => {
-  if (differenceInBusinessDays(date, add(date, { days: 1 })) > 0) {
-    return add(date, { days: 1 });
-  }
-  return date;
-};
-
-/**
- * Schema for form data which is also consumed by trpc mutation
- */
-export const createTransactionValidator = z.object({
-  transactedAt: z.preprocess((dateString) => {
-    const asDate = new Date(dateString as string);
-    if (!isDate(asDate)) {
-      return false;
-    }
-    return getNextBusinessDay(asDate);
-  }, z.date()),
-  stock: z.string().min(1).max(6),
-  units: z.number().int().positive(),
-  pricePerUnit: z.number().positive(),
-  type: z.enum(["BUY", "SELL"]),
-});
-type FormInput = z.infer<typeof createTransactionValidator>;
-
 export const CreateTransaction: React.FC = () => {
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<FormInput>({
-    resolver: zodResolver(createTransactionValidator),
+  } = useZodForm({
+    validator: createTransactionValidator,
   });
 
   const utils = trpc.useContext();
-  const { mutate: createMutate, error } = trpc.transactions.create.useMutation({
+  const createTransactionMutation = trpc.transactions.create.useMutation({
     onSuccess() {
       void utils.transactions.getByAuthedUser.invalidate();
       reset(); // reset form fields
-      setIsSubmitting(false);
     },
-    onError: (e) => {
-      console.error(e);
+    onSettled() {
       setIsSubmitting(false);
     },
   });
@@ -86,13 +57,13 @@ export const CreateTransaction: React.FC = () => {
   return (
     <div className="flex flex-col w-full p-8">
       <h1 className="text-2xl font-bold">Add new transaction</h1>
-      <p className="text-error">{error?.message}</p>
+      <p className="text-error">{createTransactionMutation.error?.message}</p>
       <form
         onSubmit={
           void handleSubmit((data, e) => {
             setIsSubmitting(true);
             e?.preventDefault();
-            createMutate(data);
+            createTransactionMutation.mutate(data);
           })
         }
       >
@@ -195,19 +166,17 @@ const columnHelper = createColumnHelper<Transaction>();
 export const TransactionsListing: React.FC = () => {
   const utils = trpc.useContext();
   const { data, isLoading } = trpc.transactions.getByAuthedUser.useQuery();
-  const { mutate: deleteMutate } = trpc.transactions.delete.useMutation({
+  const deleteMutation = trpc.transactions.delete.useMutation({
     async onMutate(deletedTransaction) {
       // Optimistic update, delete the transaction from the list immediately
       await utils.transactions.getByAuthedUser.cancel();
       const prevData = utils.transactions.getByAuthedUser.getData();
-      // FIXME: REMOVE EXPLICIT TYPE
-      utils.transactions.getByAuthedUser.setData(
-        (old: Transaction[] | undefined) =>
-          old?.filter((t) => t.id !== deletedTransaction.id),
+      utils.transactions.getByAuthedUser.setData((old) =>
+        old?.filter((t) => t.id !== deletedTransaction.id),
       );
       return { prevData };
     },
-    // Invalidate the query after the mutation is complete to sync wit server
+    // Invalidate the query after the mutation is complete to sync with server
     onSettled() {
       void utils.transactions.getByAuthedUser.invalidate();
     },
@@ -242,7 +211,7 @@ export const TransactionsListing: React.FC = () => {
           return (
             <button
               className="btn btn-ghost h-6"
-              onClick={() => deleteMutate({ id })}
+              onClick={() => deleteMutation.mutate({ id })}
             >
               <XIcon className="h-6 w-6 stroke-error" />
             </button>
@@ -250,7 +219,7 @@ export const TransactionsListing: React.FC = () => {
         },
       }),
     ],
-    [deleteMutate],
+    [deleteMutation],
   );
 
   const table = useReactTable({
