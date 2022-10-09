@@ -41,7 +41,7 @@ const PossesionView: React.FC<{
   if (isLoadingStockHistory) return <Spinner />;
   return (
     <React.Suspense fallback={<Spinner />}>
-      <div className="card h-[40vh] bg-base-200 rounded-box place-items-center">
+      <div className="card rounded-box h-[40vh] place-items-center bg-base-200">
         <h1 className="py-2">{ticker}</h1>
         {!stockHistory ? (
           <Spinner />
@@ -66,7 +66,7 @@ const StocksPage: NextPage = () => {
   if (isLoadingPossesion) return <Spinner />;
 
   return (
-    <div className="flex flex-col mt-10 gap-10">
+    <div className="mt-10 flex flex-col gap-10">
       {userPossesion?.map((possesion) => (
         <PossesionView
           key={possesion.id}

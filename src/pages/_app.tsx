@@ -22,7 +22,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
 
   return (
     <SessionProvider session={session}>
-      <div className="w-[95%] lg:w-4/5 max-w-[2000px] mx-auto">
+      <div className="mx-auto w-[95%] max-w-[2000px] lg:w-4/5">
         <Navbar />
         <Component {...pageProps} />
       </div>

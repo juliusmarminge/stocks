@@ -1,4 +1,3 @@
-import { XIcon } from "@heroicons/react/outline";
 import {
   createColumnHelper,
   flexRender,
@@ -8,6 +7,7 @@ import {
 import { format } from "date-fns";
 import { NextPage } from "next";
 import React from "react";
+import { HiOutlineX } from "react-icons/hi";
 
 import { AutoAnimate } from "~/components/autoAnimate";
 import { protectPage } from "~/server/common/gSSPPageProtection";
@@ -213,7 +213,7 @@ export const TransactionsListing: React.FC = () => {
               className="btn btn-ghost h-6"
               onClick={() => deleteMutation.mutate({ id })}
             >
-              <XIcon className="h-6 w-6 stroke-error" />
+              <HiOutlineX className="h-6 w-6 stroke-error" />
             </button>
           );
         },

@@ -1,17 +1,18 @@
-import {
-  HiOutlineSun,
-  HiOutlineMoon,
-  HiOutlineMenu,
-  HiOutlineLogin,
-  HiOutlineCurrencyDollar,
-} from "react-icons/hi";
+// eslint-disable prettier/prettier - this file seems cursed somehow
 import clsx from "clsx";
 import Image from "next/future/image";
 import { useRouter } from "next/router";
 import { signOut } from "next-auth/react";
 import React from "react";
+import { AiOutlineUser } from "react-icons/ai";
+import {
+  HiOutlineCurrencyDollar,
+  HiOutlineLogin,
+  HiOutlineMenu,
+  HiOutlineMoon,
+  HiOutlineSun,
+} from "react-icons/hi";
 
-import UserAvatar from "~/assets/user-avatar.svg";
 import { NextLink } from "~/components/nextLink";
 import { trpc } from "~/utils/trpc";
 
@@ -141,18 +142,22 @@ const ProfileAvatar: React.FC = () => {
     );
   }
 
-  const imgSrc = user.image ?? UserAvatar;
+  const imgSrc = user.image;
 
   return (
     <div className="dropdown-end dropdown">
       <label tabIndex={0} className="avatar btn btn-circle">
         <div className="relative w-10 rounded-full ring ring-primary ring-offset-2 ring-offset-base-100">
-          <Image
-            src={imgSrc}
-            alt={user.name ?? "Profile picture"}
-            width={100}
-            height={100}
-          />
+          {imgSrc ? (
+            <Image
+              src={imgSrc}
+              alt={user.name ?? "Profile picture"}
+              width={100}
+              height={100}
+            />
+          ) : (
+            <AiOutlineUser className="h-8 w-8" />
+          )}
         </div>
       </label>
       <ul
