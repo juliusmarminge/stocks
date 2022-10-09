@@ -1,9 +1,9 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
-import { authedProcedure, createRouter } from "../../trpc";
-
 import { createTransactionValidator } from "~/server/trpc/validators";
+
+import { authedProcedure, createRouter } from "../../trpc";
 
 export const transactionRouter = createRouter({
   getByAuthedUser: authedProcedure

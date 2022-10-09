@@ -19,7 +19,7 @@ import { type InferTRPC, trpc } from "../utils/trpc";
 const TransactionsPage: NextPage = () => {
   const sectionStyle = "grid card bg-base-200 rounded-box place-items-center";
   return (
-    <div className="flex flex-col w-full mt-10">
+    <div className="mt-10 flex w-full flex-col">
       <div className={sectionStyle}>
         <CreateTransaction />
       </div>
@@ -55,7 +55,7 @@ export const CreateTransaction: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
   return (
-    <div className="flex flex-col w-full p-8">
+    <div className="flex w-full flex-col p-8">
       <h1 className="text-2xl font-bold">Add new transaction</h1>
       <p className="text-error">{createTransactionMutation.error?.message}</p>
       <form
@@ -68,7 +68,7 @@ export const CreateTransaction: React.FC = () => {
         }
       >
         {/** TRANSACTED AT */}
-        <div className="my-4 input-group input-group-vertical">
+        <div className="input-group input-group-vertical my-4">
           <span className="bg-base-300">Transacted at</span>
           <input
             {...register("transactedAt", {
@@ -88,7 +88,7 @@ export const CreateTransaction: React.FC = () => {
 
         <div className="flex flex-col lg:flex-row lg:gap-2 ">
           {/** TRANSACTION TYPE */}
-          <div className="my-4 input-group input-group-vertical">
+          <div className="input-group input-group-vertical my-4">
             <span className="bg-base-300">Type</span>
             <select {...register("type")} className="select select-bordered">
               <option value="BUY">Buy</option>
@@ -97,7 +97,7 @@ export const CreateTransaction: React.FC = () => {
           </div>
 
           {/** STOCK */}
-          <div className="my-4 input-group input-group-vertical">
+          <div className="input-group input-group-vertical my-4">
             <span className="bg-base-300">Stock</span>
             <input
               {...register("stock")}
@@ -114,7 +114,7 @@ export const CreateTransaction: React.FC = () => {
 
         <div className="flex flex-col lg:flex-row lg:gap-2 ">
           {/** UNITS */}
-          <div className="my-4 input-group input-group-vertical">
+          <div className="input-group input-group-vertical my-4">
             <span className="bg-base-300">Units</span>
             <input
               {...register("units", { valueAsNumber: true })}
@@ -129,7 +129,7 @@ export const CreateTransaction: React.FC = () => {
           </div>
 
           {/** PRICE PER UNIT */}
-          <div className="my-4 input-group input-group-vertical">
+          <div className="input-group input-group-vertical my-4">
             <span className="bg-base-300">Price per unit</span>
             <input
               {...register("pricePerUnit", { valueAsNumber: true })}
@@ -146,7 +146,7 @@ export const CreateTransaction: React.FC = () => {
 
         {/** SUBMIT FORM */}
         <button
-          className={`btn btn-primary w-full mt-4 ${isSubmitting && "loading"}`}
+          className={`btn btn-primary mt-4 w-full ${isSubmitting && "loading"}`}
         >
           {isSubmitting ? "Submitting..." : "Submit"}
         </button>
@@ -236,9 +236,9 @@ export const TransactionsListing: React.FC = () => {
   }
   return (
     <div className="w-full p-8">
-      <h1 className="text-2xl font-bold pb-4">Transactions</h1>
+      <h1 className="pb-4 text-2xl font-bold">Transactions</h1>
 
-      <table className="table table-compact w-full">
+      <table className="table-compact table w-full">
         {/** table head */}
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
